@@ -17,6 +17,7 @@
     "vue-router": "^4.3.2"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.21.4"
+    "drizzle-kit": "^0.21.4",
+    "typescript": "^5.4.5"
   }
 }
