@@ -14,9 +14,8 @@ export default defineEventHandler(async (e) => {
       statusCode: 403,
     })
   }
-  
+
   return {
-    accessToken: generateAccessToken({}),
-    refreshToken: generateRefreshToken({}),
+    accessToken: generateAccessToken({}, '6h'),
   }
 })
