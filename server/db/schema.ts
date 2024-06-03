@@ -1,4 +1,5 @@
 import { pgTable, uuid, integer, varchar, text, index, json, boolean, primaryKey, pgEnum } from 'drizzle-orm/pg-core'
+import { createInsertSchema } from 'drizzle-zod'
 
 export const customers = pgTable('customers', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -20,6 +21,8 @@ export const customers = pgTable('customers', {
 export type Customer = typeof customers.$inferSelect
 export type NewCustomer = typeof customers.$inferInsert
 
+export const insertCustomerSchema = createInsertSchema(customers)
+
 export const phoneNumbers = pgTable('phone_numbers', {
   id: uuid('id').primaryKey().defaultRandom(),
   phoneNumber: varchar('phone_number', {
@@ -30,6 +33,8 @@ export const phoneNumbers = pgTable('phone_numbers', {
 
 export type PhoneNumber = typeof phoneNumbers.$inferSelect
 export type NewPhoneNumber = typeof phoneNumbers.$inferSelect
+
+export const insertPhonenumberSchema = createInsertSchema(phoneNumbers)
 
 export const addresses = pgTable('addresses', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -42,8 +47,11 @@ export const addresses = pgTable('addresses', {
 export type Address = typeof addresses.$inferSelect
 export type NewAddress = typeof addresses.$inferInsert
 
+export const insertAddressSchema = createInsertSchema(addresses)
+
 export const keyboardFormatOptions = pgEnum('keyboard_format_options', [
   '60%',
+  '65%',
   '75%',
   'TKL',
   '100%',
@@ -70,6 +78,8 @@ export const keyboards = pgTable('keyboards', {
 export type Keyboard = typeof keyboards.$inferSelect 
 export type NewKeyboard = typeof keyboards.$inferInsert
 
+export const insertKeyboardSchema = createInsertSchema(keyboards)
+
 export const keyboardColors = pgTable('keyboard_colors', {
   color: varchar('color', {
     length: 255,
@@ -90,6 +100,8 @@ export const keyboardColors = pgTable('keyboard_colors', {
 export type KeyboardColor = typeof keyboardColors.$inferSelect 
 export type NewKeyboardColor = typeof keyboardColors.$inferInsert
 
+export const insertKeyboardColorSchema = createInsertSchema(keyboardColors)
+
 export const switches = pgTable('switches', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: varchar('name', {
@@ -107,6 +119,8 @@ export const switches = pgTable('switches', {
 export type Switch = typeof switches.$inferSelect
 export type NewSwitch = typeof switches.$inferInsert
 
+export const insertSwitchSchema = createInsertSchema(switches)
+
 export const keycaps = pgTable('keycaps', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: varchar('name', {
@@ -123,6 +137,8 @@ export const keycaps = pgTable('keycaps', {
 
 export type Keycap = typeof keycaps.$inferSelect
 export type NewKeycap = typeof keycaps.$inferInsert
+
+export const insertKeycapsSchema = createInsertSchema(keycaps)
 
   // these will be basic json format for custom keyboards
   //
@@ -148,4 +164,6 @@ export const orders = pgTable('orders', {
 
 export type Order = typeof orders.$inferSelect
 export type NewOrder = typeof orders.$inferInsert
+
+export const insertOrderSchema = createInsertSchema(orders)
 
