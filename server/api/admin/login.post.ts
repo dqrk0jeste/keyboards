@@ -7,6 +7,7 @@ export default defineEventHandler(async (e) => {
       statusCode: 400
     })
   }
+
   const { adminKey } = useRuntimeConfig()
   const isValidKey = await bcrypt.compare(key, adminKey)
   if(!isValidKey) {

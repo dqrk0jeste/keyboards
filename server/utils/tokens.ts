@@ -22,14 +22,26 @@ export function generateRefreshToken(payload: Object = {}, expiresIn: string = '
   )
 } 
 
-export function verifyAccessToken(token: string): string | jwt.JwtPayload {
+type verifyAccessTokenReturn = {
+  error: any,
+  payload: null, 
+} | {
+  error: null,
+  payload: jwt.JwtPayload,
+}
+
+export function verifyAccessToken(token: string): verifyAccessTokenReturn {
   try {
     const payload = jwt.verify(token, accessTokenSecret)
-    return payload
+    return {
+      error: null,
+      payload: payload as jwt.JwtPayload,
+    }
   } catch(e: any) {
-    throw createError({
-      statusCode: 403,
-    })
+    return {
+      error: e,
+      payload: null,
+    }
   }
 }
 
