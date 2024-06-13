@@ -1,4 +1,4 @@
-import { pgTable, uuid, integer, varchar, text, index, boolean, primaryKey, pgEnum } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, integer, varchar, text, index, boolean, primaryKey, pgEnum, timestamp } from 'drizzle-orm/pg-core'
 import { createInsertSchema } from 'drizzle-zod'
 
 export const keyboardFormatOptions = pgEnum('keyboard_format_options', [
@@ -123,6 +123,7 @@ export const orders = pgTable('orders', {
   }).notNull(),
   checkoutPrice: integer('checkout_price').notNull(),
   note: text('note'),
+  sentAt: timestamp('sent_at'),
 }) 
 
 export type Order = typeof orders.$inferSelect

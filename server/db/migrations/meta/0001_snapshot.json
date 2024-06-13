@@ -1,0 +1,401 @@
+{
+  "id": "722b2294-a637-4aa1-9505-5bea61bfa766",
+  "prevId": "b16ac812-e38f-4281-b6ed-b5cc8a426b81",
+  "version": "6",
+  "dialect": "postgresql",
+  "tables": {
+    "public.keyboard_colors": {
+      "name": "keyboard_colors",
+      "schema": "",
+      "columns": {
+        "color": {
+          "name": "color",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "keyboard_id": {
+          "name": "keyboard_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "stock": {
+          "name": "stock",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "keyboard_colors_keyboard_id_keyboards_id_fk": {
+          "name": "keyboard_colors_keyboard_id_keyboards_id_fk",
+          "tableFrom": "keyboard_colors",
+          "tableTo": "keyboards",
+          "columnsFrom": [
+            "keyboard_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "keyboard_colors_color_keyboard_id_pk": {
+          "name": "keyboard_colors_color_keyboard_id_pk",
+          "columns": [
+            "color",
+            "keyboard_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.keyboards": {
+      "name": "keyboards",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_bluetooth": {
+          "name": "is_bluetooth",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_wireless": {
+          "name": "is_wireless",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "format": {
+          "name": "format",
+          "type": "keyboard_format_options",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "name": "price",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "name_index": {
+          "name": "name_index",
+          "columns": [
+            "name"
+          ],
+          "isUnique": false
+        },
+        "keyboard_price_index": {
+          "name": "keyboard_price_index",
+          "columns": [
+            "price"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.keycaps": {
+      "name": "keycaps",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "main_color": {
+          "name": "main_color",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "accent_colors": {
+          "name": "accent_colors",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_pudding": {
+          "name": "is_pudding",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "name": "price",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "stock": {
+          "name": "stock",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "keycaps_price_index": {
+          "name": "keycaps_price_index",
+          "columns": [
+            "price"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.orders": {
+      "name": "orders",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "keyboard_id": {
+          "name": "keyboard_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "switch_id": {
+          "name": "switch_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "keycap_id": {
+          "name": "keycap_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "handlubed_switches": {
+          "name": "handlubed_switches",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "extra_foam": {
+          "name": "extra_foam",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "checkout_price": {
+          "name": "checkout_price",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sent_at": {
+          "name": "sent_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "orders_keyboard_id_keyboards_id_fk": {
+          "name": "orders_keyboard_id_keyboards_id_fk",
+          "tableFrom": "orders",
+          "tableTo": "keyboards",
+          "columnsFrom": [
+            "keyboard_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "orders_switch_id_switches_id_fk": {
+          "name": "orders_switch_id_switches_id_fk",
+          "tableFrom": "orders",
+          "tableTo": "switches",
+          "columnsFrom": [
+            "switch_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "orders_keycap_id_keycaps_id_fk": {
+          "name": "orders_keycap_id_keycaps_id_fk",
+          "tableFrom": "orders",
+          "tableTo": "keycaps",
+          "columnsFrom": [
+            "keycap_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.switches": {
+      "name": "switches",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "switch_types",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "name": "price",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "stock": {
+          "name": "stock",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "switches_price_index": {
+          "name": "switches_price_index",
+          "columns": [
+            "price"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {
+    "public.keyboard_format_options": {
+      "name": "keyboard_format_options",
+      "schema": "public",
+      "values": [
+        "60%",
+        "65%",
+        "75%",
+        "TKL",
+        "100%"
+      ]
+    },
+    "public.switch_types": {
+      "name": "switch_types",
+      "schema": "public",
+      "values": [
+        "linear",
+        "tactile",
+        "clicky"
+      ]
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
