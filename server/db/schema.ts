@@ -17,6 +17,7 @@ export const keyboards = pgTable('keyboards', {
   isBluetooth: boolean('is_bluetooth').notNull(),
   isWireless: boolean('is_wireless').notNull(),
   format: keyboardFormatOptions('format').notNull(), 
+  prebuilt: boolean('prebuilt').notNull(),
   price: integer('price').notNull(),
   description: text('description'),
 }, (table) => {
@@ -56,6 +57,7 @@ export const switchTypes = pgEnum('switch_types', [
   'linear',
   'tactile',
   'clicky',
+  'silent',
 ])
 
 export const switches = pgTable('switches', {
@@ -64,13 +66,8 @@ export const switches = pgTable('switches', {
     length: 255,
   }).notNull(),
   type: switchTypes('type').notNull(),
-  price: integer('price').notNull(),
   stock: integer('stock').notNull(),
   description: text('description'),
-}, (table) => {
-  return {
-    priceIndex: index('switches_price_index').on(table.price),
-  }
 })
 
 export type Switch = typeof switches.$inferSelect
@@ -90,15 +87,9 @@ export const keycaps = pgTable('keycaps', {
     length: 255,
   }),
   isPudding: boolean('is_pudding').notNull(),
-  price: integer('price').notNull(),
   stock: integer('stock').notNull(),
   description: text('description'),
-}, (table) => {
-  return {
-    priceIndex: index('keycaps_price_index').on(table.price),
-  }
- }
-)
+})
 
 export type Keycap = typeof keycaps.$inferSelect
 export type NewKeycap = typeof keycaps.$inferInsert

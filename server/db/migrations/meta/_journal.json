@@ -15,6 +15,13 @@
       "when": 1718299264040,
       "tag": "0001_known_johnny_blaze",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1718481305666,
+      "tag": "0002_thankful_dark_beast",
+      "breakpoints": true
     }
   ]
 }
