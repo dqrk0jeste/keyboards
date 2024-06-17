@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { db } from "../db"
-import { type Keyboard, keyboards, type Switch, switches, type Keycap, keycaps } from "../db/schema"
+import { type Keyboard, keyboards, type Switch, switches, type Keycap, keycaps, keyboardColors, KeyboardColor } from "../db/schema"
 import { eq, lte, and } from "drizzle-orm"
 
 const formats = z.enum([
@@ -39,60 +39,69 @@ const bodySchema = z.object({
   maxPrice: z.number().gt(5000).finite(),
   format: formats,
   pudding: z.boolean(),
-  color: colors,
-  switches: switchTypes,
+  colors: colors.array().nonempty().max(2),
+  switchType: switchTypes,
   bluetooth: z.boolean(),
   wireless: z.boolean(),
 })
 
-async function getKeyboards(options: {
+function filterKeyboards(keyboards: {
+  keyboard: Keyboard,
+  keyboard_color: KeyboardColor,
+}[], options: {
   maxPrice: number,
   format: Format,
   bluetooth: boolean,
   wireless: boolean,
-}): Promise<Keyboard[]> {
-  return db.select().from(keyboards).where(
-    and(
-      lte(keyboards.price, options.maxPrice - 5000),
-      eq(keyboards.format, options.format),
-      eq(keyboards.isBluetooth, options.bluetooth),
-      eq(keyboards.isWireless, options.wireless),
-    )
-  )
+  colors: Color[],
+}): {
+  keyboard: Keyboard,
+  keyboard_color: KeyboardColor,
+}[] {
+  return keyboards.filter(keyboard => {
+      return keyboard.keyboard.price <= options.maxPrice - 5000
+      && keyboard.keyboard.format === options.format
+      && (!options.wireless || keyboard.keyboard.isWireless)
+      && (!options.bluetooth || keyboard.keyboard.isBluetooth)
+      && options.colors.includes(keyboard.keyboard_color.color as Color)
+    }) 
 }
 
-async function getPrebuiltKeyboards(options: {
+function filterPrebuiltKeyboards(keyboards: {
+  keyboard: Keyboard,
+  keyboard_color: KeyboardColor,
+}[], options: {
   maxPrice: number,
   format: Format,
   bluetooth: boolean,
   wireless: boolean,
-}): Promise<Keyboard[]> {
-  return db.select().from(keyboards).where(
-    and(
-      lte(keyboards.price, options.maxPrice),
-      eq(keyboards.format, options.format),
-      eq(keyboards.isBluetooth, options.bluetooth),
-      eq(keyboards.isWireless, options.wireless),
-    )
-  )
+  colors: Color[],
+}): {
+  keyboard: Keyboard,
+  keyboard_color: KeyboardColor,
+}[] {
+  return keyboards.filter(keyboard => {
+    return keyboard.keyboard.isPrebuilt
+      && keyboard.keyboard.price <= options.maxPrice
+      && keyboard.keyboard.format === options.format
+      && (!options.wireless || keyboard.keyboard.isWireless)
+      && (!options.bluetooth || keyboard.keyboard.isBluetooth)
+      && options.colors.includes(keyboard.keyboard_color.color as Color)
+  }) 
 }
 
-async function getSwitches(switchType: SwitchType): Promise<Switch[]> {
-  return db.select().from(switches).where(
-    eq(switches.type, switchType),
-  )
+function filterSwitches(switches: Switch[], switchType: SwitchType): Switch[] {
+   return switches.filter(s => s.type === switchType)
 }
 
-async function getKeycaps(options: {
-  color: Color,
+function filterKeycaps(keycaps: Keycap[], options: {
+  colors: Color[],
   pudding: boolean,
-}): Promise<Keycap[]> {
-  return db.select().from(keycaps).where(
-    and(
-      eq(keycaps.mainColor, options.color),
-      eq(keycaps.isPudding, options.pudding),
-    )
-  )
+}): Keycap[] {
+   return keycaps.filter(keycap => {
+    return options.colors.includes(keycap.mainColor as Color)
+    || options.colors.includes(keycap.accentColors as Color)
+  })
 }
 
 export default defineEventHandler(async (e) => {
@@ -104,11 +113,30 @@ export default defineEventHandler(async (e) => {
     })
   }
 
-  const { maxPrice, format, color, switches, pudding, bluetooth, wireless } = parsed.data
-  // const result = await Promise.all([
-  //   getKeyboards({ maxPrice, format, co }),
-  //   getPrebuiltKeyboards(),
-  //
-  // ])
+  const {
+    maxPrice,
+    format,
+    colors,
+    switchType,
+    pudding,
+    bluetooth,
+    wireless
+  } = parsed.data
+
+  const [
+    keyboardWithColorsOptions,
+    switchOptions,
+    keycapOptions,
+  ] = await Promise.all([
+    db.select().from(keyboards).innerJoin(keyboardColors, eq(keyboards.id, keyboardColors.keyboardId)),
+    db.select().from(switches),
+    db.select().from(keycaps),
+  ])
+
+  const possibleKeyboards = filterKeyboards(keyboardWithColorsOptions, { maxPrice, format, colors, bluetooth, wireless })
+  const possibleSwitches = filterSwitches(switchOptions, switchType)
+
+  const possiblePrebuilts = filterPrebuiltKeyboards(keyboardWithColorsOptions, { maxPrice, format, colors, bluetooth, wireless })
+  
 })
 

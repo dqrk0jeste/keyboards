@@ -4,7 +4,7 @@ import { insertOrderSchema, orders } from "~/server/db/schema"
 export default defineEventHandler(async (e) => {
   const body = await readBody(e)
   const parsed = insertOrderSchema.safeParse(body)
-  if(!parsed.success) {
+  if(!parsed.success || parsed.data.sentAt) {
     throw createError({
       statusCode: 400,
     })

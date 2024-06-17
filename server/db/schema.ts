@@ -17,7 +17,7 @@ export const keyboards = pgTable('keyboards', {
   isBluetooth: boolean('is_bluetooth').notNull(),
   isWireless: boolean('is_wireless').notNull(),
   format: keyboardFormatOptions('format').notNull(), 
-  prebuilt: boolean('prebuilt').notNull(),
+  isPrebuilt: boolean('prebuilt').notNull(),
   price: integer('price').notNull(),
   description: text('description'),
 }, (table) => {
