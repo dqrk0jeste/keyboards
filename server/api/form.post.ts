@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { db } from "../db"
 import { type Keyboard, keyboards, type Switch, switches, type Keycap, keycaps, keyboardColors, KeyboardColor } from "../db/schema"
-import { eq, lte, and } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 
 const formats = z.enum([
   "60%",
@@ -45,48 +45,47 @@ const bodySchema = z.object({
   wireless: z.boolean(),
 })
 
-function filterKeyboards(keyboards: {
-  keyboard: Keyboard,
-  keyboard_color: KeyboardColor,
-}[], options: {
+type KeyboardWithColor = {
+  keyboards: Keyboard,
+  keyboard_colors: KeyboardColor,
+}
+type FilterKeyboardsReturn = {
+  matching: {
+    keyboards: Keyboard,
+    keyboard_colors: KeyboardColor,
+  }[],
+  other: {
+    keyboards: Keyboard,
+    keyboard_colors: KeyboardColor,
+  }[], 
+} 
+
+type FilterKeyboardsOptions = {
   maxPrice: number,
   format: Format,
   bluetooth: boolean,
   wireless: boolean,
   colors: Color[],
-}): {
-  keyboard: Keyboard,
-  keyboard_color: KeyboardColor,
-}[] {
-  return keyboards.filter(keyboard => {
-      return keyboard.keyboard.price <= options.maxPrice - 5000
-      && keyboard.keyboard.format === options.format
-      && (!options.wireless || keyboard.keyboard.isWireless)
-      && (!options.bluetooth || keyboard.keyboard.isBluetooth)
-      && options.colors.includes(keyboard.keyboard_color.color as Color)
-    }) 
 }
 
-function filterPrebuiltKeyboards(keyboards: {
-  keyboard: Keyboard,
-  keyboard_color: KeyboardColor,
-}[], options: {
-  maxPrice: number,
-  format: Format,
-  bluetooth: boolean,
-  wireless: boolean,
-  colors: Color[],
-}): {
-  keyboard: Keyboard,
-  keyboard_color: KeyboardColor,
-}[] {
+function filterKeyboards(keyboards: KeyboardWithColor[], options: FilterKeyboardsOptions): FilterKeyboardsReturn {
+  const matching = keyboards.filter(keyboard => {
+      return keyboard.keyboards.price <= options.maxPrice - 5000
+      && keyboard.keyboards.format === options.format
+      && (!options.wireless || keyboard.keyboards.isWireless)
+      && (!options.bluetooth || keyboard.keyboards.isBluetooth)
+      && options.colors.includes(keyboard.keyboard_colors.color as Color)
+    })
+}
+
+function filterPrebuiltKeyboards(keyboards: KeyboardWithColor[], options: FilterKeyboardsOptions): FilterKeyboardsReturn {
   return keyboards.filter(keyboard => {
-    return keyboard.keyboard.isPrebuilt
-      && keyboard.keyboard.price <= options.maxPrice
-      && keyboard.keyboard.format === options.format
-      && (!options.wireless || keyboard.keyboard.isWireless)
-      && (!options.bluetooth || keyboard.keyboard.isBluetooth)
-      && options.colors.includes(keyboard.keyboard_color.color as Color)
+    return keyboard.keyboards.isPrebuilt
+      && keyboard.keyboards.price <= options.maxPrice
+      && keyboard.keyboards.format === options.format
+      && (!options.wireless || keyboard.keyboards.isWireless)
+      && (!options.bluetooth || keyboard.keyboards.isBluetooth)
+      && options.colors.includes(keyboard.keyboard_colors.color as Color)
   }) 
 }
 
@@ -98,9 +97,14 @@ function filterKeycaps(keycaps: Keycap[], options: {
   colors: Color[],
   pudding: boolean,
 }): Keycap[] {
-   return keycaps.filter(keycap => {
-    return options.colors.includes(keycap.mainColor as Color)
-    || options.colors.includes(keycap.accentColors as Color)
+  return keycaps.filter(keycap => {
+    const keycapColors = keycap.accentColors?.split(' ')
+    const hasRightColorsInAccent = keycapColors?.reduce((current, color) => {
+      return current || options.colors.includes(color as Color)
+    }, false)
+    return (options.colors.includes(keycap.mainColor as Color)
+      || hasRightColorsInAccent)
+      && (!options.pudding || keycap.isPudding)
   })
 }
 
@@ -134,9 +138,10 @@ export default defineEventHandler(async (e) => {
   ])
 
   const possibleKeyboards = filterKeyboards(keyboardWithColorsOptions, { maxPrice, format, colors, bluetooth, wireless })
+  // rangiranje ce da ide po bojama, boje se daju sa tezinama, tako da donose 2 ili 1 poen.
   const possibleSwitches = filterSwitches(switchOptions, switchType)
+  const possibleKeycaps = filterKeycaps(keycapOptions, { pudding, colors })
 
   const possiblePrebuilts = filterPrebuiltKeyboards(keyboardWithColorsOptions, { maxPrice, format, colors, bluetooth, wireless })
-  
 })
 
