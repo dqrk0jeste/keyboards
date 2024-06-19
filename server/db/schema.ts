@@ -1,13 +1,8 @@
 import { pgTable, uuid, integer, varchar, text, index, boolean, primaryKey, pgEnum, timestamp } from 'drizzle-orm/pg-core'
 import { createInsertSchema } from 'drizzle-zod'
+import { switchTypes as switchTypesEnum, formats } from '../utils/enums'
 
-export const keyboardFormatOptions = pgEnum('keyboard_format_options', [
-  '60%',
-  '65%',
-  '75%',
-  'TKL',
-  '100%',
-])
+export const keyboardFormatOptions = pgEnum('keyboard_format_options', formats)
 
 export const keyboards = pgTable('keyboards', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -53,12 +48,7 @@ export type NewKeyboardColor = typeof keyboardColors.$inferInsert
 
 export const insertKeyboardColorSchema = createInsertSchema(keyboardColors)
 
-export const switchTypes = pgEnum('switch_types', [
-  'linear',
-  'tactile',
-  'clicky',
-  'silent',
-])
+export const switchTypes = pgEnum('switch_types', switchTypesEnum)
 
 export const switches = pgTable('switches', {
   id: uuid('id').primaryKey().defaultRandom(),

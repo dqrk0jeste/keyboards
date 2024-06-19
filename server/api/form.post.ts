@@ -3,7 +3,7 @@ import { db } from "../db"
 import { type Keyboard, keyboards, type Switch, switches, type Keycap, keycaps, keyboardColors, KeyboardColor } from "../db/schema"
 import { eq } from "drizzle-orm"
 
-const formats = z.enum([
+onst formats = z.enum([
   "60%",
   "65%",
   "75%",
