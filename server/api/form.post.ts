@@ -2,26 +2,17 @@ import { z } from "zod"
 import { db } from "../db"
 import { type Keyboard, keyboards, type Switch, switches, type Keycap, keycaps, keyboardColors, KeyboardColor } from "../db/schema"
 import { eq, gt } from "drizzle-orm"
-import { formats as formatsEnum, switchTypes as switchTypesEnum } from "../utils/enums"
+import { colors as colorOptions, formats as formatOptions, switchTypes as switchTypeOptions } from "../utils/enums"
 
-const formats = z.enum(formatsEnum)
+const formats = z.enum(formatOptions)
 
 type Format = z.infer<typeof formats>
 
-const colors = z.enum([
-  "white",
-  "black",
-  "blue",
-  "red",
-  "yellow",
-  "green",
-  "purple",
-  "orange",
-])
+const colors = z.enum(colorOptions)
 
 type Color = z.infer<typeof colors>
 
-const switchTypes = z.enum(switchTypesEnum)
+const switchTypes = z.enum(switchTypeOptions)
 
 type SwitchType = z.infer<typeof switchTypes>
 
