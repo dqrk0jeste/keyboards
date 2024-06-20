@@ -13,12 +13,13 @@ export default defineEventHandler(async (e) => {
   const id = getRouterParam(e, 'id')
 
   const body = await readBody(e)
-  if(typeof body.sentAt !== 'boolean') {
+  if(!body.sentAt) {
     throw createError({
       statusCode: 400,
     })
   }
 
   const result = await db.update(orders).set({ sentAt: body.sentAt }).where(eq(orders.id, id!)).returning()
+
   return result[0]
 })

@@ -1,15 +1,10 @@
 import { z } from "zod"
 import { db } from "../db"
 import { type Keyboard, keyboards, type Switch, switches, type Keycap, keycaps, keyboardColors, KeyboardColor } from "../db/schema"
-import { eq } from "drizzle-orm"
+import { eq, gt } from "drizzle-orm"
+import { formats as formatsEnum, switchTypes as switchTypesEnum } from "../utils/enums"
 
-onst formats = z.enum([
-  "60%",
-  "65%",
-  "75%",
-  "TKL",
-  "100%",
-])
+const formats = z.enum(formatsEnum)
 
 type Format = z.infer<typeof formats>
 
@@ -26,12 +21,7 @@ const colors = z.enum([
 
 type Color = z.infer<typeof colors>
 
-const switchTypes = z.enum([
-  "linear",
-  "tactile",
-  "clicky",
-  "silent",
-])
+const switchTypes = z.enum(switchTypesEnum)
 
 type SwitchType = z.infer<typeof switchTypes>
 
@@ -78,7 +68,11 @@ function filterKeyboards(keyboards: KeyboardWithColor[], options: FilterKeyboard
     ) {
       if(options.mainColor === keyboard.keyboard_colors.color) {
         matchingMainColor.push(keyboard)
-      } else if(options.otherColor === keyboard.keyboard_colors.color) {
+      } else if(
+        options.otherColor === keyboard.keyboard_colors.color
+        || keyboard.keyboard_colors.color === "black"
+        || keyboard.keyboard_colors.color === "white"
+      ) {
         matchingSecondaryColor.push(keyboard)
       }
     } else {
@@ -218,9 +212,9 @@ export default defineEventHandler(async (e) => {
     switchOptions,
     keycapOptions,
   ] = await Promise.all([
-    db.select().from(keyboards).innerJoin(keyboardColors, eq(keyboards.id, keyboardColors.keyboardId)),
-    db.select().from(switches),
-    db.select().from(keycaps),
+    db.select().from(keyboards).innerJoin(keyboardColors, eq(keyboards.id, keyboardColors.keyboardId)).where(gt(keyboardColors.stock, 0)),
+    db.select().from(switches).where(gt(switches.stock, 0)),
+    db.select().from(keycaps).where(gt(keycaps.stock, 0)),
   ])
 
   const keyboardResponse = filterKeyboards(keyboardWithColorsOptions, { maxPrice, format, mainColor, otherColor, bluetooth, wireless })

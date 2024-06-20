@@ -1,5 +1,5 @@
 {
-  "id": "b16ac812-e38f-4281-b6ed-b5cc8a426b81",
+  "id": "ee0b8685-9521-49f6-a56c-dcbed4ca69d9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
@@ -8,6 +8,13 @@
       "name": "keyboard_colors",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
         "color": {
           "name": "color",
           "type": "varchar(255)",
@@ -43,15 +50,7 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {
-        "keyboard_colors_color_keyboard_id_pk": {
-          "name": "keyboard_colors_color_keyboard_id_pk",
-          "columns": [
-            "color",
-            "keyboard_id"
-          ]
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
     "public.keyboards": {
@@ -90,6 +89,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "has_RGB": {
+          "name": "has_RGB",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
         "price": {
           "name": "price",
           "type": "integer",
@@ -104,13 +109,6 @@
         }
       },
       "indexes": {
-        "name_index": {
-          "name": "name_index",
-          "columns": [
-            "name"
-          ],
-          "isUnique": false
-        },
         "keyboard_price_index": {
           "name": "keyboard_price_index",
           "columns": [
@@ -158,12 +156,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "price": {
-          "name": "price",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
         "stock": {
           "name": "stock",
           "type": "integer",
@@ -177,15 +169,7 @@
           "notNull": false
         }
       },
-      "indexes": {
-        "keycaps_price_index": {
-          "name": "keycaps_price_index",
-          "columns": [
-            "price"
-          ],
-          "isUnique": false
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
@@ -201,8 +185,8 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "keyboard_id": {
-          "name": "keyboard_id",
+        "keyboard_color_id": {
+          "name": "keyboard_color_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -260,16 +244,22 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "shipped_at": {
+          "name": "shipped_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "orders_keyboard_id_keyboards_id_fk": {
-          "name": "orders_keyboard_id_keyboards_id_fk",
+        "orders_keyboard_color_id_keyboard_colors_id_fk": {
+          "name": "orders_keyboard_color_id_keyboard_colors_id_fk",
           "tableFrom": "orders",
-          "tableTo": "keyboards",
+          "tableTo": "keyboard_colors",
           "columnsFrom": [
-            "keyboard_id"
+            "keyboard_color_id"
           ],
           "columnsTo": [
             "id"
@@ -331,12 +321,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "price": {
-          "name": "price",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
         "stock": {
           "name": "stock",
           "type": "integer",
@@ -350,15 +334,7 @@
           "notNull": false
         }
       },
-      "indexes": {
-        "switches_price_index": {
-          "name": "switches_price_index",
-          "columns": [
-            "price"
-          ],
-          "isUnique": false
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
@@ -382,7 +358,8 @@
       "values": [
         "linear",
         "tactile",
-        "clicky"
+        "clicky",
+        "silent"
       ]
     }
   },

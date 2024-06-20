@@ -1,4 +1,4 @@
-import { pgTable, uuid, integer, varchar, text, index, boolean, primaryKey, pgEnum, timestamp } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, integer, varchar, text, index, boolean, pgEnum, timestamp } from 'drizzle-orm/pg-core'
 import { createInsertSchema } from 'drizzle-zod'
 import { switchTypes as switchTypesEnum, formats } from '../utils/enums'
 
@@ -12,12 +12,11 @@ export const keyboards = pgTable('keyboards', {
   isBluetooth: boolean('is_bluetooth').notNull(),
   isWireless: boolean('is_wireless').notNull(),
   format: keyboardFormatOptions('format').notNull(), 
-  isPrebuilt: boolean('prebuilt').notNull(),
+  hasRGB: boolean('has_RGB').notNull(),
   price: integer('price').notNull(),
   description: text('description'),
 }, (table) => {
     return {
-      nameIndex: index('name_index').on(table.name),
       priceIndex: index('keyboard_price_index').on(table.price),
     }
   }
@@ -29,19 +28,13 @@ export type NewKeyboard = typeof keyboards.$inferInsert
 export const insertKeyboardSchema = createInsertSchema(keyboards)
 
 export const keyboardColors = pgTable('keyboard_colors', {
+  id: uuid('id').primaryKey().defaultRandom(),
   color: varchar('color', {
     length: 255,
   }).notNull(),
   keyboardId: uuid('keyboard_id').references(() => keyboards.id).notNull(),
   stock: integer('stock').notNull(),
-}, (table) => {
-    return {
-      pk: primaryKey({
-        columns: [table.color, table.keyboardId],
-      }),
-    }
- }
-)
+})
 
 export type KeyboardColor = typeof keyboardColors.$inferSelect 
 export type NewKeyboardColor = typeof keyboardColors.$inferInsert
@@ -88,7 +81,7 @@ export const insertKeycapsSchema = createInsertSchema(keycaps)
 
 export const orders = pgTable('orders', {
   id: uuid('id').primaryKey().defaultRandom(),
-  keyboardId: uuid('keyboard_id').references(() => keyboards.id).notNull(),
+  keyboardColorId: uuid('keyboard_color_id').references(() => keyboardColors.id).notNull(),
   switchId: uuid('switch_id').references(() => switches.id).notNull(),
   keycapId: uuid('keycap_id').references(() => keycaps.id).notNull(),
   handlubedSwitches: boolean('handlubed_switches').notNull(),
@@ -104,7 +97,7 @@ export const orders = pgTable('orders', {
   }).notNull(),
   checkoutPrice: integer('checkout_price').notNull(),
   note: text('note'),
-  sentAt: timestamp('sent_at'),
+  shippedAt: timestamp('shipped_at'),
 }) 
 
 export type Order = typeof orders.$inferSelect

@@ -1,5 +1,6 @@
+import { eq } from "drizzle-orm"
 import { db } from "~/server/db"
-import { insertKeyboardColorSchema, keyboardColors } from "~/server/db/schema"
+import { keyboardColors } from "~/server/db/schema"
 
 export default defineEventHandler(async (e) => {
   const isAuthed = authAdmin(e)
@@ -9,14 +10,15 @@ export default defineEventHandler(async (e) => {
     })
   }
 
+  const id = getRouterParam(e, 'id')
+
   const body = await readBody(e)
-  const parsed = insertKeyboardColorSchema.safeParse(body)
-  if(!parsed.success) {
+  if(body.stock) {
     throw createError({
       statusCode: 400,
     })
   }
 
-  const result = await db.insert(keyboardColors).values(parsed.data).returning()
+  const result = await db.update(keyboardColors).set({ stock: body.stock }).where(eq(keyboardColors.id, id!)).returning()
   return result[0]
 })
