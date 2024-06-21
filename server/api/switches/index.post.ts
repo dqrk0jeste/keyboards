@@ -16,6 +16,11 @@ export default defineEventHandler(async (e) => {
       statusCode: 400,
     })
   }
-  const result = await db.insert(switches).values(parsed.data).returning()
+
+  const result = await db
+    .insert(switches)
+    .values(parsed.data)
+    .returning()
+
   return result[0]
 })

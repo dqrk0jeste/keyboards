@@ -20,7 +20,8 @@ export default defineEventHandler(async (e) => {
     })
   }
 
-  const result = await db.update(keycaps)
+  const result = await db
+    .update(keycaps)
     .set(parsed.data)
     .where(eq(keycaps.id, id!))
     .returning()

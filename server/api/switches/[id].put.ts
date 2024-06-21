@@ -20,7 +20,11 @@ export default defineEventHandler(async (e) => {
     })
   }
 
-  const result = await db.update(switches).set(parsed.data).where(eq(switches.id, id!)).returning()
+  const result = await db
+    .update(switches)
+    .set(parsed.data)
+    .where(eq(switches.id, id!))
+    .returning()
 
   return result[0]
 })
