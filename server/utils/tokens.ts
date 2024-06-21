@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 const { accessTokenSecret, refreshTokenSecret } = useRuntimeConfig()
 
-export function generateAccessToken(payload: Object = {}, expiresIn: string = '15m') {
+export function generateAccessToken(payload: Object, expiresIn: string = '15m') {
   return jwt.sign(
     payload,
     accessTokenSecret,
@@ -12,7 +12,7 @@ export function generateAccessToken(payload: Object = {}, expiresIn: string = '1
   )
 } 
 
-export function generateRefreshToken(payload: Object = {}, expiresIn: string = '30 days') {
+export function generateRefreshToken(payload: Object, expiresIn: string = '30 days') {
   return jwt.sign(
     payload,
     refreshTokenSecret,

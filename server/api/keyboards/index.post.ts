@@ -1,5 +1,15 @@
+import { z } from "zod"
 import { db } from "~/server/db"
-import { insertKeyboardSchema, keyboards } from "~/server/db/schema"
+import { insertKeyboardSchema, keyboardColors, keyboards } from "~/server/db/schema"
+
+const bodySchema = insertKeyboardSchema.and(
+  z.object({
+    colorOptions: z.object({
+      color: z.enum(colors),
+      stock: z.number().gt(0),
+    }).array(),
+  })
+)
 
 export default defineEventHandler(async (e) => {
   const isAuthed = authAdmin(e)
@@ -10,12 +20,30 @@ export default defineEventHandler(async (e) => {
   }
 
   const body = await readBody(e)
-  const parsed = insertKeyboardSchema.safeParse(body)
+  const parsed = bodySchema.safeParse(body)
   if(!parsed.success) {
     throw createError({
       statusCode: 400,
     })
   }
-  const result = await db.insert(keyboards).values(parsed.data).returning()
-  return result[0]
+
+  const result = await db
+    .insert(keyboards)
+    .values(parsed.data)
+    .returning()
+
+  const colorOptions = await db
+    .insert(keyboardColors)
+    .values(parsed.data.colorOptions.map(c => {
+      return {
+        ...c,
+        keyboardId: result[0].id,
+      }
+    }))
+    .returning()
+
+  return {
+    ...result[0],
+    colorOptions,
+  }
 })

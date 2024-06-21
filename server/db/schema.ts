@@ -39,6 +39,14 @@ export const keyboardColors = pgTable('keyboard_colors', {
 export type KeyboardColor = typeof keyboardColors.$inferSelect 
 export type NewKeyboardColor = typeof keyboardColors.$inferInsert
 
+export type KeyboardWithColorOptions = Keyboard & {
+  colorOptions: {
+    id: string,
+    color: Color,
+    stock: number,
+  }[],
+}
+
 export const insertKeyboardColorSchema = createInsertSchema(keyboardColors)
 
 export const switchTypes = pgEnum('switch_types', switchTypesEnum)

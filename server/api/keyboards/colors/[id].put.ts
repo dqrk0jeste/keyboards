@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm"
 import { db } from "~/server/db"
-import { insertKeyboardSchema, keyboards } from "~/server/db/schema"
+import { KeyboardColor, insertKeyboardColorSchema, keyboardColors } from "~/server/db/schema"
 
 export default defineEventHandler(async (e) => {
   const isAuthed = authAdmin(e)
@@ -13,18 +13,26 @@ export default defineEventHandler(async (e) => {
   const id = getRouterParam(e, 'id')
 
   const body = await readBody(e)
-  const parsed = insertKeyboardSchema.safeParse(body)
+  const parsed = insertKeyboardColorSchema.omit({ keyboardId: true }).array().safeParse(body)
   if(!parsed.success) {
     throw createError({
       statusCode: 400,
     })
   }
 
+  await db
+    .delete(keyboardColors)
+    .where(eq(keyboardColors.keyboardId, id!))
+
   const result = await db
-    .update(keyboards)
-    .set(parsed.data)
-    .where(eq(keyboards.id, id!))
+    .insert(keyboardColors)
+    .values(parsed.data.map(c => {
+      return {
+        ...c,
+        keyboardId: id!,
+      }
+    }))
     .returning()
 
-  return result[0]
+  return result
 })
