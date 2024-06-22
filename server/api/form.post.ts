@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { db } from "../db"
-import { Keyboard, keyboards, Switch, switches, Keycap, keycaps, keyboardColors, KeyboardColor, KeyboardWithColorOptions } from "../db/schema"
+import { keyboards, Switch, switches, Keycap, keycaps, keyboardColors } from "../db/schema"
 import { asc, eq, gt } from "drizzle-orm"
 import { colors as colorOptions, formats as formatOptions, switchTypes as switchTypeOptions } from "../utils/enums"
 import { keyboardsJoinedColorRow, KeyboardsJoinedColorsRow } from "../utils/translate"
@@ -32,7 +32,6 @@ function filterKeyboards(keyboards: KeyboardsJoinedColorsRow[], options: FilterK
   const matchingMainColor = [] as KeyboardsJoinedColorsRow[]
   const matchingSecondaryColor = [] as KeyboardsJoinedColorsRow[]
   const blackOrWhite = [] as KeyboardsJoinedColorsRow[]
-  const other = [] as KeyboardsJoinedColorsRow[]
 
   for(const keyboard of keyboards) {
     if(
