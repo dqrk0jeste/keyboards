@@ -1,8 +1,9 @@
 import { z } from "zod"
 import { db } from "../db"
-import { type Keyboard, keyboards, type Switch, switches, type Keycap, keycaps, keyboardColors, KeyboardColor } from "../db/schema"
+import { Keyboard, keyboards, Switch, switches, Keycap, keycaps, keyboardColors, KeyboardColor, KeyboardWithColorOptions } from "../db/schema"
 import { asc, eq, gt } from "drizzle-orm"
 import { colors as colorOptions, formats as formatOptions, switchTypes as switchTypeOptions } from "../utils/enums"
+import { keyboardsJoinedColorRow, KeyboardsJoinedColorsRow } from "../utils/translate"
 
 const formats = z.enum(formatOptions)
 const colors = z.enum(colorOptions)
@@ -18,16 +19,6 @@ const bodySchema = z.object({
   wireless: z.boolean(),
 })
 
-type Filter<T> = {
-  matching: T[],
-  other: T[], 
-} 
-
-type KeyboardWithColor = {
-  keyboards: Keyboard,
-  keyboard_colors: KeyboardColor,
-}
-
 type FilterKeyboardsOptions = {
   format: Format,
   bluetooth: boolean,
@@ -37,52 +28,43 @@ type FilterKeyboardsOptions = {
   pudding: boolean,
 }
 
-function filterKeyboards(keyboards: KeyboardWithColor[], options: FilterKeyboardsOptions): Filter<KeyboardWithColor> {
-  const matchingMainColor = [] as KeyboardWithColor[]
-  const matchingSecondaryColor = [] as KeyboardWithColor[]
-  const other = [] as KeyboardWithColor[]
+function filterKeyboards(keyboards: KeyboardsJoinedColorsRow[], options: FilterKeyboardsOptions) {
+  const matchingMainColor = [] as KeyboardsJoinedColorsRow[]
+  const matchingSecondaryColor = [] as KeyboardsJoinedColorsRow[]
+  const blackOrWhite = [] as KeyboardsJoinedColorsRow[]
+  const other = [] as KeyboardsJoinedColorsRow[]
 
   for(const keyboard of keyboards) {
     if(
-      keyboard.keyboards.format === options.format
-      && (!options.wireless || keyboard.keyboards.isWireless)
-      && (!options.bluetooth || keyboard.keyboards.isBluetooth)
-      && (!options.pudding || keyboard.keyboards.hasRGB)
+      keyboard.format === options.format
+      && (!options.wireless || keyboard.isWireless)
+      && (!options.bluetooth || keyboard.isBluetooth)
+      && (!options.pudding || keyboard.hasRGB)
     ) {
-      if(options.mainColor === keyboard.keyboard_colors.color) {
+      if(options.mainColor === keyboard.color) {
         matchingMainColor.push(keyboard)
-      } else if(
-        options.otherColor === keyboard.keyboard_colors.color
-        || keyboard.keyboard_colors.color === "black"
-        || keyboard.keyboard_colors.color === "white"
-      ) {
+      } else if(options.otherColor === keyboard.color) {
         matchingSecondaryColor.push(keyboard)
+      } else if(keyboard.color === "white" || keyboard.color === "black") {
+        blackOrWhite.push(keyboard)
       }
-    } else {
-      other.push(keyboard)
     }
   }
 
   return {
     matching: [...matchingMainColor, ...matchingSecondaryColor],
-    other,
+    blackOrWhite,
   }
 }
 
-function filterSwitches(switches: Switch[], switchType: SwitchType): Filter<Switch> {
+function filterSwitches(switches: Switch[], switchType: SwitchType): Switch[] {
   const matching = [] as Switch[]
-  const other = [] as Switch[]
   for(const s of switches) {
     if(s.type === switchType) {
       matching.push(s)
-    } else {
-      other.push(s)
     }
   }
-  return {
-    matching,
-    other,
-  }
+  return matching
 }
 
 type FilterKeycapsOptions = {
@@ -96,9 +78,8 @@ type Ranking<T> = {
   rank: number,
 }
 
-function filterKeycaps(keycaps: Keycap[], options: FilterKeycapsOptions): Filter<Keycap> {
+function filterKeycaps(keycaps: Keycap[], options: FilterKeycapsOptions): Keycap[] {
   const matching = [] as Ranking<Keycap>[]
-  const other = [] as Keycap[]
 
   for(const keycap of keycaps) {
     const entry = {
@@ -123,31 +104,29 @@ function filterKeycaps(keycaps: Keycap[], options: FilterKeycapsOptions): Filter
     }
 
     if(entry.rank === 0) {
-      other.push(keycap)
+      continue
     } else if(!options.pudding || keycap.isPudding){
       matching.push(entry)
-    } else {
-      other.push(keycap)
     }
   }
 
-  return {
-    matching: matching.sort((a, b) => {
+  return matching
+    .sort((a, b) => {
       if(a.rank === b.rank) {
         return a.value.price - b.value.price
       }
-      return a.rank - b.rank
-    }).map(r => r.value),
-    other: other.sort((a, b) => a.price - b.price),
-  }
+      return b.rank - a.rank
+    })
+    .map(r => r.value)
 }
 
 export default defineEventHandler(async (e) => {
-  const body = readBody(e)
+  const body = await readBody(e)
   const parsed = bodySchema.safeParse(body)
   if(!parsed.success) {
     throw createError({
-      statusCode: 400,
+      statusCode: 400, 
+      data: parsed.error,
     })
   }
 
@@ -162,12 +141,12 @@ export default defineEventHandler(async (e) => {
   } = parsed.data
 
   const [
-    keyboardWithColorsOptions,
+    keyboardsJoinedColors,
     switchOptions,
     keycapOptions,
   ] = await Promise.all([
     db
-      .select()
+      .select(keyboardsJoinedColorRow)
       .from(keyboards)
       .innerJoin(keyboardColors, eq(keyboards.id, keyboardColors.keyboardId))
       .where(gt(keyboardColors.stock, 0))
@@ -183,17 +162,15 @@ export default defineEventHandler(async (e) => {
       .where(gt(keycaps.stock, 0)),
   ])
 
-  const keyboardResponse = filterKeyboards(keyboardWithColorsOptions, { format, mainColor, otherColor, bluetooth, wireless, pudding })
+  const keyboardResponse = filterKeyboards(keyboardsJoinedColors, { format, mainColor, otherColor, bluetooth, wireless, pudding })
   const switchResponse = filterSwitches(switchOptions, switchType)
   const keycapResponse = filterKeycaps(keycapOptions, { pudding, mainColor, otherColor })
 
   return {
     matchingKeyboards: keyboardResponse.matching,
-    otherKeyboards: keyboardResponse.other,
-    matchingSwitches: switchResponse.matching,
-    otherSwitches: switchResponse.other,
-    matchingKeycaps: keycapResponse.matching,
-    otherKeycaps: keycapResponse.other,
+    blackOrWhiteKeyboards: keyboardResponse.blackOrWhite,
+    matchingSwitches: switchResponse,
+    matchingKeycaps: keycapResponse,
   }
 })
 
