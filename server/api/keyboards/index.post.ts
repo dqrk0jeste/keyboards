@@ -6,6 +6,7 @@ const bodySchema = insertKeyboardSchema.and(
   z.object({
     colorOptions: z.object({
       color: z.enum(colors),
+      price: z.number().gt(0),
       stock: z.number().gt(0),
     }).array(),
   })

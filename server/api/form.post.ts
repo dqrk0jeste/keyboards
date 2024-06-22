@@ -1,27 +1,18 @@
 import { z } from "zod"
 import { db } from "../db"
 import { type Keyboard, keyboards, type Switch, switches, type Keycap, keycaps, keyboardColors, KeyboardColor } from "../db/schema"
-import { eq, gt } from "drizzle-orm"
+import { asc, eq, gt } from "drizzle-orm"
 import { colors as colorOptions, formats as formatOptions, switchTypes as switchTypeOptions } from "../utils/enums"
 
 const formats = z.enum(formatOptions)
-
-type Format = z.infer<typeof formats>
-
 const colors = z.enum(colorOptions)
-
-type Color = z.infer<typeof colors>
-
 const switchTypes = z.enum(switchTypeOptions)
 
-type SwitchType = z.infer<typeof switchTypes>
-
 const bodySchema = z.object({
-  maxPrice: z.number().gt(5000).finite(),
   format: formats,
   pudding: z.boolean(),
   mainColor: colors,
-  otherColor: colors.nullish(),
+  otherColor: colors.or(z.null()),
   switchType: switchTypes,
   bluetooth: z.boolean(),
   wireless: z.boolean(),
@@ -38,24 +29,25 @@ type KeyboardWithColor = {
 }
 
 type FilterKeyboardsOptions = {
-  maxPrice: number,
   format: Format,
   bluetooth: boolean,
   wireless: boolean,
   mainColor: Color,
-  otherColor: Color | undefined | null,
+  otherColor: Color | null,
+  pudding: boolean,
 }
 
 function filterKeyboards(keyboards: KeyboardWithColor[], options: FilterKeyboardsOptions): Filter<KeyboardWithColor> {
   const matchingMainColor = [] as KeyboardWithColor[]
   const matchingSecondaryColor = [] as KeyboardWithColor[]
   const other = [] as KeyboardWithColor[]
+
   for(const keyboard of keyboards) {
     if(
-      keyboard.keyboards.price <= options.maxPrice - 5000
-      && keyboard.keyboards.format === options.format
+      keyboard.keyboards.format === options.format
       && (!options.wireless || keyboard.keyboards.isWireless)
       && (!options.bluetooth || keyboard.keyboards.isBluetooth)
+      && (!options.pudding || keyboard.keyboards.hasRGB)
     ) {
       if(options.mainColor === keyboard.keyboard_colors.color) {
         matchingMainColor.push(keyboard)
@@ -64,34 +56,6 @@ function filterKeyboards(keyboards: KeyboardWithColor[], options: FilterKeyboard
         || keyboard.keyboard_colors.color === "black"
         || keyboard.keyboard_colors.color === "white"
       ) {
-        matchingSecondaryColor.push(keyboard)
-      }
-    } else {
-      other.push(keyboard)
-    }
-  }
-
-  return {
-    matching: [...matchingMainColor, ...matchingSecondaryColor],
-    other,
-  }
-}
-
-function filterPrebuiltKeyboards(keyboards: KeyboardWithColor[], options: FilterKeyboardsOptions): Filter<KeyboardWithColor> {
-  const matchingMainColor = [] as KeyboardWithColor[]
-  const matchingSecondaryColor = [] as KeyboardWithColor[]
-  const other = [] as KeyboardWithColor[]
-  for(const keyboard of keyboards) {
-    if(
-      keyboard.keyboards.isPrebuilt
-      && keyboard.keyboards.price <= options.maxPrice
-      && keyboard.keyboards.format === options.format
-      && (!options.wireless || keyboard.keyboards.isWireless)
-      && (!options.bluetooth || keyboard.keyboards.isBluetooth)
-    ) {
-      if(options.mainColor === keyboard.keyboard_colors.color) {
-        matchingMainColor.push(keyboard)
-      } else if(options.otherColor === keyboard.keyboard_colors.color) {
         matchingSecondaryColor.push(keyboard)
       }
     } else {
@@ -123,7 +87,7 @@ function filterSwitches(switches: Switch[], switchType: SwitchType): Filter<Swit
 
 type FilterKeycapsOptions = {
   mainColor: Color,
-  otherColor: Color | undefined | null,
+  otherColor: Color | null,
   pudding: boolean,
 }
 
@@ -169,12 +133,12 @@ function filterKeycaps(keycaps: Keycap[], options: FilterKeycapsOptions): Filter
 
   return {
     matching: matching.sort((a, b) => {
-      if(a.rank > b.rank) {
-        return 1
+      if(a.rank === b.rank) {
+        return a.value.price - b.value.price
       }
-      return -1
+      return a.rank - b.rank
     }).map(r => r.value),
-    other,
+    other: other.sort((a, b) => a.price - b.price),
   }
 }
 
@@ -188,7 +152,6 @@ export default defineEventHandler(async (e) => {
   }
 
   const {
-    maxPrice,
     format,
     mainColor,
     otherColor,
@@ -203,15 +166,26 @@ export default defineEventHandler(async (e) => {
     switchOptions,
     keycapOptions,
   ] = await Promise.all([
-    db.select().from(keyboards).innerJoin(keyboardColors, eq(keyboards.id, keyboardColors.keyboardId)).where(gt(keyboardColors.stock, 0)),
-    db.select().from(switches).where(gt(switches.stock, 0)),
-    db.select().from(keycaps).where(gt(keycaps.stock, 0)),
+    db
+      .select()
+      .from(keyboards)
+      .innerJoin(keyboardColors, eq(keyboards.id, keyboardColors.keyboardId))
+      .where(gt(keyboardColors.stock, 0))
+      .orderBy(asc(keyboardColors.price)),
+    db
+      .select()
+      .from(switches)
+      .where(gt(switches.stock, 0))
+      .orderBy(asc(switches.price)),
+    db
+      .select()
+      .from(keycaps)
+      .where(gt(keycaps.stock, 0)),
   ])
 
-  const keyboardResponse = filterKeyboards(keyboardWithColorsOptions, { maxPrice, format, mainColor, otherColor, bluetooth, wireless })
+  const keyboardResponse = filterKeyboards(keyboardWithColorsOptions, { format, mainColor, otherColor, bluetooth, wireless, pudding })
   const switchResponse = filterSwitches(switchOptions, switchType)
   const keycapResponse = filterKeycaps(keycapOptions, { pudding, mainColor, otherColor })
-  const prebuilts = filterPrebuiltKeyboards(keyboardWithColorsOptions, { maxPrice, format, mainColor, otherColor, bluetooth, wireless })
 
   return {
     matchingKeyboards: keyboardResponse.matching,
@@ -220,7 +194,6 @@ export default defineEventHandler(async (e) => {
     otherSwitches: switchResponse.other,
     matchingKeycaps: keycapResponse.matching,
     otherKeycaps: keycapResponse.other,
-    prebuilts,
   }
 })
 

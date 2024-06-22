@@ -22,6 +22,7 @@ export default defineEventHandler(async (e): Promise<KeyboardWithColorOptions> =
     return {
       id: keyboard.keyboard_colors.id,
       color: keyboard.keyboard_colors.color as Color,
+      price: result[i].keyboard_colors.price,
       stock: keyboard.keyboard_colors.stock,
     }
   })

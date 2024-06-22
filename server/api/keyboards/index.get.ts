@@ -19,6 +19,7 @@ export default defineEventHandler(async () => {
         colorOptions: [{
           id: result[i].keyboard_colors.id,
           color: result[i].keyboard_colors.color as Color,
+          price: result[i].keyboard_colors.price,
           stock: result[i].keyboard_colors.stock,
         }],
       })
@@ -26,6 +27,7 @@ export default defineEventHandler(async () => {
       response[response.length - 1].colorOptions.push({
         id: result[i].keyboard_colors.id,
         color: result[i].keyboard_colors.color as Color,
+        price: result[i].keyboard_colors.price,
         stock: result[i].keyboard_colors.stock,
       })
     }

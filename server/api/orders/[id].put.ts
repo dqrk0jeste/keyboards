@@ -12,8 +12,8 @@ export default defineEventHandler(async (e) => {
 
   const id = getRouterParam(e, 'id')
 
-  const body = await readBody(e)
-  if(!body.shippedAt) {
+  const { shippedAt } = await readBody(e)
+  if(!shippedAt || typeof shippedAt !== 'string') {
     throw createError({
       statusCode: 400,
     })
@@ -21,7 +21,7 @@ export default defineEventHandler(async (e) => {
 
   const result = await db
     .update(orders)
-    .set({ shippedAt: body.shippedAt })
+    .set({ shippedAt: new Date(shippedAt) })
     .where(eq(orders.id, id!))
     .returning()
 

@@ -13,14 +13,8 @@ export const keyboards = pgTable('keyboards', {
   isWireless: boolean('is_wireless').notNull(),
   format: keyboardFormatOptions('format').notNull(), 
   hasRGB: boolean('has_RGB').notNull(),
-  price: integer('price').notNull(),
   description: text('description'),
-}, (table) => {
-    return {
-      priceIndex: index('keyboard_price_index').on(table.price),
-    }
-  }
-)
+})
 
 export type Keyboard = typeof keyboards.$inferSelect 
 export type NewKeyboard = typeof keyboards.$inferInsert
@@ -33,8 +27,14 @@ export const keyboardColors = pgTable('keyboard_colors', {
     length: 255,
   }).notNull(),
   keyboardId: uuid('keyboard_id').references(() => keyboards.id).notNull(),
+  price: integer('price').notNull(),
   stock: integer('stock').notNull(),
-})
+}, (table) => {
+    return {
+      priceIndex: index('keyboard_colors_price_index').on(table.price),
+    }
+  }
+)
 
 export type KeyboardColor = typeof keyboardColors.$inferSelect 
 export type NewKeyboardColor = typeof keyboardColors.$inferInsert
@@ -43,6 +43,7 @@ export type KeyboardWithColorOptions = Keyboard & {
   colorOptions: {
     id: string,
     color: Color,
+    price: number,
     stock: number,
   }[],
 }
@@ -57,9 +58,15 @@ export const switches = pgTable('switches', {
     length: 255,
   }).notNull(),
   type: switchTypes('type').notNull(),
+  price: integer('price').notNull(),
   stock: integer('stock').notNull(),
   description: text('description'),
-})
+}, (table) => {
+    return {
+      priceIndex: index('switches_price_index').on(table.price)
+    }
+  }
+)
 
 export type Switch = typeof switches.$inferSelect
 export type NewSwitch = typeof switches.$inferInsert
@@ -78,9 +85,15 @@ export const keycaps = pgTable('keycaps', {
     length: 255,
   }),
   isPudding: boolean('is_pudding').notNull(),
+  price: integer('price').notNull(),
   stock: integer('stock').notNull(),
   description: text('description'),
-})
+}, (table) => {
+    return {
+      priceIndex: index('switces_price_index').on(table.price)
+    }
+  }
+)
 
 export type Keycap = typeof keycaps.$inferSelect
 export type NewKeycap = typeof keycaps.$inferInsert
