@@ -9,6 +9,7 @@ export default defineNuxtConfig({
   modules: [
     "@nuxtjs/tailwindcss",
     "@nuxtjs/google-fonts",
+    "shadcn-nuxt"
   ],
   googleFonts: {
     families: {

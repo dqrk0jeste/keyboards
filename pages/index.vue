@@ -4,4 +4,5 @@
 
 <template>
   <Hero />
+  <Instructions />
 </template>
