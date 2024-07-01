@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <section class="py-32 max-w-[1280px] m-auto">
+  <section class="py-16 max-w-screen-xl m-auto">
     <h3 class="text-2xl md:text-3xl lg:text-4xl px-4 text-center font-bold">
       <span class="block">
         Na Vama je samo da nam opišete Vašu idealnu tastaturu.

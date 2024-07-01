@@ -5,4 +5,5 @@
 <template>
   <Hero />
   <Instructions />
+  <OrderNow />
 </template>
