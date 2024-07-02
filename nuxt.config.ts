@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET!,
   },
   modules: [
+    "@vueuse/nuxt",
     "@nuxtjs/tailwindcss",
     "@nuxtjs/google-fonts",
     "shadcn-nuxt"

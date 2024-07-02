@@ -1,5 +1,5 @@
-import { db } from "../db"
-import { keycaps } from "../db/schema"
+import { db } from "../../db"
+import { keycaps } from "../../db/schema"
 
 export default defineEventHandler(async () => {
   const [ mainColors, otherColors ] = await db.batch([

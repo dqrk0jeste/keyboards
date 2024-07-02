@@ -1,3 +1,3 @@
-import { bodySchema as b } from "@/server/utils/form"
+import { bodySchema } from "@/server/utils/form"
 
-export const bodySchema = b 
+export const orderFormSchema = bodySchema

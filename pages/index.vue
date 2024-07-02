@@ -1,10 +1,6 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
-  <Hero />
-  <Showcase />
-  <Instructions />
-  <OrderNow />
+  <IndexHero />
+  <IndexShowcase />
+  <IndexInstructions />
+  <IndexOrderNow />
 </template>

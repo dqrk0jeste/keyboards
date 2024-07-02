@@ -17,6 +17,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@vee-validate/zod": "^4.13.1",
     "@vueuse/core": "^10.11.0",
+    "@vueuse/nuxt": "^10.11.0",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
