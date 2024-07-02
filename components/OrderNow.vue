@@ -11,7 +11,7 @@
       </NuxtLink> 
     </div>
     <div class="flex-1 max-w-screen-sm">
-      <img src="~/assets/images/keyboard_1.jpg" alt="" class="rounded-2xl">
+      <img src="@/assets/images/keyboard_1.jpg" alt="" class="rounded-2xl">
     </div>
   </section>
 </template>

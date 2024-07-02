@@ -1,23 +1,6 @@
-import { z } from "zod"
 import { db } from "../db"
 import { keyboards, Switch, switches, Keycap, keycaps, keyboardColors } from "../db/schema"
 import { asc, eq, gt } from "drizzle-orm"
-import { colors as colorOptions, formats as formatOptions, switchTypes as switchTypeOptions } from "../utils/enums"
-import { keyboardsJoinedColorRow, KeyboardsJoinedColorsRow } from "../utils/translate"
-
-const formats = z.enum(formatOptions)
-const colors = z.enum(colorOptions)
-const switchTypes = z.enum(switchTypeOptions)
-
-const bodySchema = z.object({
-  format: formats,
-  pudding: z.boolean(),
-  mainColor: colors,
-  otherColor: colors.or(z.null()),
-  switchType: switchTypes,
-  bluetooth: z.boolean(),
-  wireless: z.boolean(),
-})
 
 type FilterKeyboardsOptions = {
   format: Format,

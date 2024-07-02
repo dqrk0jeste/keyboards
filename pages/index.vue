@@ -4,6 +4,7 @@
 
 <template>
   <Hero />
+  <Showcase />
   <Instructions />
   <OrderNow />
 </template>

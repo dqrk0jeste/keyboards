@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <section class="px-4 h-screen flex items-center justify-center">
+  <section class="px-4 min-h-screen flex items-center justify-center">
     <div class="flex flex-col gap-3 items-center">
       <h1 class="text-balance text-4xl sm:text-5xl md:text-6xl lg:text-8xl text-black font-bold text-center">
         Sastavite svoju novu mehaničku tastaturu
