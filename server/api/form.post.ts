@@ -1,6 +1,7 @@
 import { db } from "../db"
 import { keyboards, Switch, switches, Keycap, keycaps, keyboardColors } from "../db/schema"
 import { asc, eq, gt } from "drizzle-orm"
+import { FormReturn } from "../utils/form"
 
 type FilterKeyboardsOptions = {
   format: Format,
@@ -102,7 +103,7 @@ function filterKeycaps(keycaps: Keycap[], options: FilterKeycapsOptions): Keycap
     .map(r => r.value)
 }
 
-export default defineEventHandler(async (e) => {
+export default defineEventHandler(async (e): Promise<FormReturn> => {
   const body = await readBody(e)
   const parsed = bodySchema.safeParse(body)
   if(!parsed.success) {
