@@ -124,5 +124,7 @@ export const orders = pgTable('orders', {
 export type Order = typeof orders.$inferSelect
 export type NewOrder = typeof orders.$inferInsert
 
-export const insertOrderSchema = createInsertSchema(orders)
-
+export const insertOrderSchema = createInsertSchema(orders).omit({
+  id: true,
+  shippedAt: true,
+})

@@ -10,9 +10,9 @@
       allowfullscreen>
     </iframe>
     <div class="flex-1">
-      <h3 class="text-balance text-3xl font-bold text-center">
+      <h4 class="text-balance text-2xl md:text-3xl font-bold text-center">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit, labore.
-      </h3>
+      </h4>
     </div>
   </section>
 </template>

@@ -7,16 +7,16 @@
       <h1 class="text-balance text-4xl sm:text-5xl md:text-6xl lg:text-8xl text-black font-bold text-center">
         Sastavite svoju novu mehaničku tastaturu
       </h1>
-      <h2 class="text-balance text-center text-lg md:text-2xl text-gray-700">
+      <h2 class="text-center text-lg md:text-2xl text-gray-700">
         Upitnik će Vam pomoći u odabiru. Ostalo prepustite nama.
       </h2>
       <div class="pt-3 flex gap-3">
-        <NuxtLink to="/">
+        <NuxtLink to="/form">
           <Button class="text-lg font-bold py-6">
             Započni upitnik
           </Button>
         </NuxtLink> 
-        <NuxtLink to="/">
+        <NuxtLink to="/order">
           <Button variant="outline" class="text-lg font-bold py-6">
             Sastavi sam
           </Button>

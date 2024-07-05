@@ -1,3 +1,5 @@
+import { z } from "zod"
+
 export const formats = [
   '60%',
   '65%',
@@ -7,6 +9,8 @@ export const formats = [
 ] as const
 
 export type Format = typeof formats[number]
+export const zFormats = z.enum(formats)
+
 
 export const switchTypes = [
   "linear",
@@ -16,6 +20,7 @@ export const switchTypes = [
 ] as const 
 
 export type SwitchType = typeof switchTypes[number]
+export const zSwitchTypes = z.enum(switchTypes)
 
 export const colors = [
   "white",
@@ -30,3 +35,4 @@ export const colors = [
 ] as const
 
 export type Color = typeof colors[number]
+export const zColors = z.enum(colors)

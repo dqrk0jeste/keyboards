@@ -17,5 +17,19 @@ export default defineNuxtConfig({
       Raleway: true,
       Poppins: true,
     }
+  },
+  routeRules: {
+    "/": {
+      prerender: true,
+    },
+    "/order": {
+      ssr: false,
+    },
+    "/form": {
+      ssr: true,
+    },
+    "/admin/**": {
+      ssr: false,
+    },
   }
 })
