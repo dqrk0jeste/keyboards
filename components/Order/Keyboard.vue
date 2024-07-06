@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import { SelectItem } from '../ui/select';
-import Select from '../ui/select/Select.vue';
-import SelectContent from '../ui/select/SelectContent.vue';
-import SelectTrigger from '../ui/select/SelectTrigger.vue';
-import SelectValue from '../ui/select/SelectValue.vue';
-
 const cameFromForm = useRoute().params.form === "true"
 
 const formKeyboards = cameFromForm ? useFormData().value.response.matchingKeyboards : null
@@ -43,27 +37,11 @@ const {
   <h2 class="text-3xl sm:text-4xl md:text-5xl ">
     Tastatura
   </h2>
-  <FormField v-slot="{ componentField }" name="keyboardColorId">
-    <FormItem>
-      <FormLabel v-bind="componentField" class="text-xl">
-        Telo tastature 
-      </FormLabel>
-      <FormControl>
-        <Select v-bind="componentField">
-          <SelectTrigger>
-            <SelectValue placeholder="Odaberi opciju"/>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem v-for="keyboard in keyboards" :key="keyboard.id" :value="keyboard.id">
-              {{ keyboard.name }}
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </FormControl>
-      <FormDescription>
-        This is your public display name.
-      </FormDescription>
-      <FormMessage />
-    </FormItem>
-  </FormField>
-</template>
+  <div class="max-w-screen-xs">
+    <OrderSelectModal :items="keyboards!">
+      <p>
+        Izaberi telo tastature:
+      </p>
+    </OrderSelectModal>
+  </div>
+</template

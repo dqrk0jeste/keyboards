@@ -127,7 +127,7 @@ export default defineEventHandler(async (e): Promise<FormReturn> => {
     keyboardsJoinedColors,
     switchOptions,
     keycapOptions,
-  ] = await Promise.all([
+  ] = await db.batch([
     db
       .select(keyboardsJoinedColorRow)
       .from(keyboards)

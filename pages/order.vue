@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import { toTypedSchema } from '@vee-validate/zod'
-import { useForm } from 'vee-validate'
-
 const order = useOrder()
-
-const form = useForm({
-  validationSchema: toTypedSchema(orderSchema)
-})
 
 const formPart = ref("keyboard" as "keyboard" | "personal")
 
-const submitForm = form.handleSubmit((values) => {
-  console.log(values)
-})
+async function submitForm() {
+  const parsed = orderSchema.safeParse(order)
+  if(!parsed.success) {
+
+  }
+  parsed.data
+  // send order
+}
 </script>
 
 <template>
