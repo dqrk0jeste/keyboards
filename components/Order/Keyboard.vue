@@ -1,9 +1,13 @@
 <script setup lang="ts">
-const cameFromForm = useRoute().params.form === "true"
+const {
+  hasCompletedForm,
+  response,
+  body,
+} = useFormStatus().value
 
-const formKeyboards = cameFromForm ? useFormData().value.response.matchingKeyboards : null
-const formSwitches = cameFromForm ? useFormData().value.response.matchingSwitches : null
-const formKeycaps = cameFromForm ? useFormData().value.response.matchingKeycaps : null
+const formKeyboards = hasCompletedForm ? response.matchingKeyboards : null
+const formSwitches = hasCompletedForm ? response.matchingSwitches : null
+const formKeycaps = hasCompletedForm ? response.matchingKeycaps : null
 
 const { 
   data: keyboards, 
@@ -11,7 +15,7 @@ const {
   pending: keyboardsPending,
   execute: fetchKeyboards,
 } = await useFetch("/api/keyboards", {
-  immediate: !cameFromForm,
+  immediate: !hasCompletedForm,
 })
 
 const { 
@@ -20,7 +24,7 @@ const {
   pending: switchesPending,
   execute: fetchSwitches,
 } = await useFetch("/api/switches", {
-  immediate: !cameFromForm,
+  immediate: !hasCompletedForm,
 })
 
 const { 
@@ -29,7 +33,7 @@ const {
   pending: keycapsPending,
   execute: fetchKeycaps,
 } = await useFetch("/api/keycaps", {
-  immediate: !cameFromForm,
+  immediate: !hasCompletedForm,
 })
 </script>
 
@@ -37,11 +41,16 @@ const {
   <h2 class="text-3xl sm:text-4xl md:text-5xl ">
     Tastatura
   </h2>
-  <div class="max-w-screen-xs">
-    <OrderSelectModal :items="keyboards!">
-      <p>
-        Izaberi telo tastature:
+  <div class="max-w-screen-sm space-y-4">
+    <OrderSelectModal type="switches" :items="switches!">
+      <p class="text-lg md:text-2xl font-bold">
+        Odaberi svoje svičeve
+      </p>
+    </OrderSelectModal>
+    <OrderSelectModal type="keycaps" :items="keycaps!">
+      <p class="text-lg md:text-2xl font-bold">
+        Odaberi svoje kapice
       </p>
     </OrderSelectModal>
   </div>
-</template
+</template>
