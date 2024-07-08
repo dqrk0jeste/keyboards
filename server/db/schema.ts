@@ -19,7 +19,7 @@ export const keyboards = pgTable('keyboards', {
 export type Keyboard = typeof keyboards.$inferSelect 
 export type NewKeyboard = typeof keyboards.$inferInsert
 
-export const insertKeyboardSchema = createInsertSchema(keyboards)
+export const insertKeyboardSchema = createInsertSchema(keyboards).omit({ id: true })
 
 export const keyboardColors = pgTable('keyboard_colors', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -48,7 +48,7 @@ export type KeyboardWithColorOptions = Keyboard & {
   }[],
 }
 
-export const insertKeyboardColorSchema = createInsertSchema(keyboardColors)
+export const insertKeyboardColorSchema = createInsertSchema(keyboardColors).omit({ id: true })
 
 export const switchTypes = pgEnum('switch_types', switchTypesEnum)
 
@@ -71,7 +71,7 @@ export const switches = pgTable('switches', {
 export type Switch = typeof switches.$inferSelect
 export type NewSwitch = typeof switches.$inferInsert
 
-export const insertSwitchSchema = createInsertSchema(switches)
+export const insertSwitchSchema = createInsertSchema(switches).omit({ id: true })
 
 export const keycaps = pgTable('keycaps', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -98,7 +98,7 @@ export const keycaps = pgTable('keycaps', {
 export type Keycap = typeof keycaps.$inferSelect
 export type NewKeycap = typeof keycaps.$inferInsert
 
-export const insertKeycapsSchema = createInsertSchema(keycaps)
+export const insertKeycapsSchema = createInsertSchema(keycaps).omit({ id: true })
 
 export const orders = pgTable('orders', {
   id: uuid('id').primaryKey().defaultRandom(),

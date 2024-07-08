@@ -14,7 +14,7 @@ async function submitForm() {
 </script>
 
 <template>
-  <div class="max-w-screen-lg m-auto py-16 px-4">
+  <div class="max-w-screen-xl m-auto py-16 px-4">
     <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold">
       Vaša narudžba
     </h1>

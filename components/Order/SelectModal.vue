@@ -1,6 +1,6 @@
-<script setup lang="ts" generic="T extends Item">
-//@ts-ignore
-import type { SwitchType } from '~/server/utils/enums';
+<script setup lang="ts" generic="T extends Item"> // @ts-ignore
+// @ts-ignore
+import type { SwitchType } from '~/server/utils/enums'
 
 interface Item {
   id: string,
@@ -10,7 +10,7 @@ interface Item {
 
 const props = defineProps<{
   items: T[], 
-  type: "switches" | "keycaps",
+  type: "switches" | "keycaps" | "keyboards",
 }>()
 
 const emits = defineEmits<{
@@ -39,14 +39,14 @@ function colorBasedOnSwitchType(type: SwitchType): string {
   <div 
     v-if="selected"
     @click="isActive = true"
-    class="w-fit flex gap-3 items-center p-2 rounded-lg border-2 border-black hover:bg-gray-50"
+    class="w-full flex gap-3 items-center p-2 rounded-lg border-2 border-black hover:bg-gray-50"
   >
     <img 
       src="@/assets/images/keyboard_1.jpg" 
       class="w-28 rounded-md"
     >
     <div class="w-full">
-      <div class="flex items-start justify-around">
+      <div class="flex items-start justify-between">
         <p class="text-lg md:text-2xl font-bold pr-8">
           {{ selected.name }}
         </p>
@@ -66,7 +66,7 @@ function colorBasedOnSwitchType(type: SwitchType): string {
     v-else 
     type="button"
     @click="isActive = true"
-    class="flex items-center gap-3 p-2 rounded-lg border-2 border-black hover:bg-gray-50"
+    class="w-full flex items-center gap-3 p-2 rounded-lg border-2 border-black hover:bg-gray-50"
   >
     <p class="text-4xl font-bold px-8 py-4">
       ?
@@ -76,7 +76,7 @@ function colorBasedOnSwitchType(type: SwitchType): string {
   <BaseModal 
     :isActive="isActive" 
     @clicked-outside="isActive = false"
-    class="border-2 border-black rounded-2xl p-5 bg-white drop-shadow-lg shadow-gray-500"
+    class="sm:min-w-[450px] border-2 border-black rounded-2xl p-5 bg-white drop-shadow-lg shadow-gray-500"
   >
     <div 
       v-for="item in props.items"
@@ -98,6 +98,12 @@ function colorBasedOnSwitchType(type: SwitchType): string {
               v-if="'mainColor' in item"
               class="inline-block ml-2 rounded-full aspect-square w-6 border-black border-2" 
               :style="{ backgroundColor: item.mainColor }"
+            >
+            </div>
+            <div 
+              v-if="'color' in item"
+              class="inline-block ml-2 rounded-full aspect-square w-6 border-black border-2" 
+              :style="{ backgroundColor: item.color }"
             >
             </div>
             <div 

@@ -1,40 +1,57 @@
 <script setup lang="ts">
+import type { Keyboard, Keycap, Switch } from '~/server/db/schema'
+
 const {
   hasCompletedForm,
   response,
-  body,
 } = useFormStatus().value
 
-const formKeyboards = hasCompletedForm ? response.matchingKeyboards : null
-const formSwitches = hasCompletedForm ? response.matchingSwitches : null
-const formKeycaps = hasCompletedForm ? response.matchingKeycaps : null
+const keyboards = ref([] as Keyboard[])
+const switches = ref([] as Switch[])
+const keycaps = ref([] as Keycap[])
 
-const { 
-  data: keyboards, 
-  error: keyboardsError, 
-  pending: keyboardsPending,
-  execute: fetchKeyboards,
-} = await useFetch("/api/keyboards", {
-  immediate: !hasCompletedForm,
-})
+if(hasCompletedForm) {
+  keyboards.value = response.matchingKeyboards
+  switches.value = response.matchingSwitches
+  keycaps.value = response.matchingKeycaps
+} else {
+  const {
+    allKeyboards,
+    allSwitches,
+    allKeycaps,
+  } = await getAllEverything()
 
-const { 
-  data: switches, 
-  error: switchesError, 
-  pending: switchesPending,
-  execute: fetchSwitches,
-} = await useFetch("/api/switches", {
-  immediate: !hasCompletedForm,
-})
+  keyboards.value = allKeyboards
+  switches.value = allSwitches
+  keycaps.value = allKeycaps
+}
 
-const { 
-  data: keycaps, 
-  error: keycapsError, 
-  pending: keycapsPending,
-  execute: fetchKeycaps,
-} = await useFetch("/api/keycaps", {
-  immediate: !hasCompletedForm,
-})
+async function getAllEverything() {
+  const [
+    allKeyboards,
+    allSwitches,
+    allKeycaps,
+  ] = await Promise.all([
+    getAllKeyboards(),
+    getAllSwitches(),
+    getAllKeycaps(),
+  ])
+  return {
+    allKeyboards,
+    allSwitches,
+    allKeycaps,
+  }
+}
+
+async function getAllKeyboards() {
+  return await $fetch("/api/keyboards")
+}
+async function getAllSwitches() {
+  return await $fetch("/api/switches")
+}
+async function getAllKeycaps() {
+  return await $fetch("/api/keycaps")
+}
 </script>
 
 <template>
@@ -42,6 +59,11 @@ const {
     Tastatura
   </h2>
   <div class="max-w-screen-sm space-y-4">
+    <OrderSelectModal type="keyboards" :items="keyboards!">
+      <p class="text-lg md:text-2xl font-bold">
+        Odaberi svoju tastaturu
+      </p>
+    </OrderSelectModal>
     <OrderSelectModal type="switches" :items="switches!">
       <p class="text-lg md:text-2xl font-bold">
         Odaberi svoje svičeve

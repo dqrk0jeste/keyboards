@@ -1,10 +1,10 @@
-import { db } from "../db";
-import { KeyboardWithColorOptions, KeyboardColor, Keyboard, keyboardColors, keyboards } from "../db/schema";
+import { KeyboardWithColorOptions, KeyboardColor, Keyboard, keyboardColors, keyboards } from "../db/schema"
 
 type KeyboardJoinedColorsRow = {
   keyboards: Keyboard,
   keyboard_colors: KeyboardColor,
 }
+
 export const keyboardsJoinedColorRow = {
   id: keyboardColors.id,
   keyboardId: keyboardColors.keyboardId,

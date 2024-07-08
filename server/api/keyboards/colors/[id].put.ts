@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm"
 import { db } from "~/server/db"
-import { KeyboardColor, insertKeyboardColorSchema, keyboardColors } from "~/server/db/schema"
+import { insertKeyboardColorSchema, keyboardColors } from "~/server/db/schema"
 
 export default defineEventHandler(async (e) => {
   const isAuthed = authAdmin(e)

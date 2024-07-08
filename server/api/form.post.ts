@@ -1,7 +1,23 @@
+import { z } from "zod"
 import { db } from "../db"
 import { keyboards, Switch, switches, Keycap, keycaps, keyboardColors } from "../db/schema"
-import { asc, eq, gt } from "drizzle-orm"
-import { FormReturn } from "../utils/form"
+import { and, asc, eq, gt, or } from "drizzle-orm"
+import { colors as colorOptions, formats as formatOptions, switchTypes as switchTypeOptions } from "../utils/enums"
+import { keyboardsJoinedColorRow, KeyboardsJoinedColorsRow } from "../utils/translate"
+
+const formats = z.enum(formatOptions)
+const colors = z.enum(colorOptions)
+const switchTypes = z.enum(switchTypeOptions)
+
+const bodySchema = z.object({
+  format: formats,
+  pudding: z.boolean(),
+  mainColor: colors,
+  otherColor: colors.or(z.null()),
+  switchTypes: switchTypes.array(),
+  bluetooth: z.boolean(),
+  wireless: z.boolean(),
+})
 
 type FilterKeyboardsOptions = {
   format: Format,
@@ -103,7 +119,7 @@ function filterKeycaps(keycaps: Keycap[], options: FilterKeycapsOptions): Keycap
     .map(r => r.value)
 }
 
-export default defineEventHandler(async (e): Promise<FormReturn> => {
+export default defineEventHandler(async (e) => {
   const body = await readBody(e)
   const parsed = bodySchema.safeParse(body)
   if(!parsed.success) {
@@ -117,17 +133,19 @@ export default defineEventHandler(async (e): Promise<FormReturn> => {
     format,
     mainColor,
     otherColor,
-    switchType,
+    switchTypes,
     pudding,
     bluetooth,
     wireless
   } = parsed.data
 
+  const isValidSwitchTypeQuerry = or(...switchTypes.map(st => eq(switches.type, st)))
+
   const [
     keyboardsJoinedColors,
     switchOptions,
     keycapOptions,
-  ] = await db.batch([
+  ] = await Promise.all([
     db
       .select(keyboardsJoinedColorRow)
       .from(keyboards)
@@ -137,7 +155,7 @@ export default defineEventHandler(async (e): Promise<FormReturn> => {
     db
       .select()
       .from(switches)
-      .where(gt(switches.stock, 0))
+      .where(and(gt(switches.stock, 0), isValidSwitchTypeQuerry))
       .orderBy(asc(switches.price)),
     db
       .select()
@@ -146,7 +164,7 @@ export default defineEventHandler(async (e): Promise<FormReturn> => {
   ])
 
   const keyboardResponse = filterKeyboards(keyboardsJoinedColors, { format, mainColor, otherColor, bluetooth, wireless, pudding })
-  const switchResponse = filterSwitches(switchOptions, switchType)
+  const switchResponse = switchOptions
   const keycapResponse = filterKeycaps(keycapOptions, { pudding, mainColor, otherColor })
 
   return {

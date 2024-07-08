@@ -1,13 +1,12 @@
 import { eq } from "drizzle-orm"
 import { db } from "~/server/db"
-import { keyboards, keyboardColors, type KeyboardWithColorOptions } from "~/server/db/schema"
-import { type Color } from "~/server/utils/enums"
+import { keyboards, keyboardColors } from "~/server/db/schema"
 
-export default defineEventHandler(async (e): Promise<KeyboardWithColorOptions> => {
+export default defineEventHandler(async (e): Promise<KeyboardsJoinedColorsRow> => {
   const id = getRouterParam(e, 'id')
 
   const result = await db
-    .select()
+    .select(keyboardsJoinedColorRow)
     .from(keyboards)
     .innerJoin(keyboardColors, eq(keyboards.id, keyboardColors.keyboardId))
     .where(eq(keyboards.id, id!))
@@ -18,17 +17,5 @@ export default defineEventHandler(async (e): Promise<KeyboardWithColorOptions> =
     })
   }
 
-  const colorOptions = result.map(keyboard => {
-    return {
-      id: keyboard.keyboard_colors.id,
-      color: keyboard.keyboard_colors.color as Color,
-      price: keyboard.keyboard_colors.price,
-      stock: keyboard.keyboard_colors.stock,
-    }
-  })
-
-  return {
-    ...result[0].keyboards,
-    colorOptions,
-  }
+  return result[0]
 })

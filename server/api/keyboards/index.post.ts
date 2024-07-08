@@ -1,14 +1,10 @@
 import { z } from "zod"
 import { db } from "~/server/db"
-import { insertKeyboardSchema, keyboardColors, keyboards } from "~/server/db/schema"
+import { insertKeyboardSchema, insertKeyboardColorSchema, keyboardColors, keyboards } from "~/server/db/schema"
 
 const bodySchema = insertKeyboardSchema.and(
   z.object({
-    colorOptions: z.object({
-      color: z.enum(colors),
-      price: z.number().gt(0),
-      stock: z.number().gt(0),
-    }).array(),
+    colors: insertKeyboardColorSchema.omit({ keyboardId: true }).array(),
   })
 )
 
@@ -33,9 +29,9 @@ export default defineEventHandler(async (e) => {
     .values(parsed.data)
     .returning()
 
-  const colorOptions = await db
+  const colors = await db
     .insert(keyboardColors)
-    .values(parsed.data.colorOptions.map(c => {
+    .values(parsed.data.colors.map(c => {
       return {
         ...c,
         keyboardId: result[0].id,
@@ -45,6 +41,6 @@ export default defineEventHandler(async (e) => {
 
   return {
     ...result[0],
-    colorOptions,
+    colors,
   }
 })
