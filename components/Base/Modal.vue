@@ -23,7 +23,7 @@ onClickOutside(modal, () => {
     <div class="absolute top-0 left-0 h-[100dvh] w-full backdrop-blur flex items-center justify-center z-50">
       <div 
         ref="modal" 
-        class="max-h-[80dvh] max-w-[90vw] overflow-auto"
+        class="max-h-[80dvh] max-w-[90vw] overflow-x-auto"
         v-bind="$attrs"
       >
         <slot />
