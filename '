@@ -2,7 +2,7 @@
 const order = useOrder()
 
 const formParts = [ "Tastatura", "Modovi", "Lični podaci", "Pregled" ] as const
-const currentPart = ref(0)
+const currentPart = ref(3)
 
 async function submitForm() {
   const parsed = orderSchema.safeParse(order)
@@ -36,22 +36,22 @@ async function submitForm() {
         v-if="currentPart < formParts.length - 1"
         class="flex sm:hidden items-center border-black border-2 rounded-2xl divide-black divide-x-2 overflow-hidden"
       >
-        <div class="flex-1 font-bold text-lg py-2 transition-colors text-center bg-black text-white">
-          {{ formParts[currentPart] }}
-        </div>
         <div class="flex-1 font-bold text-lg py-2 transition-colors text-center bg-white text-black">
           {{ formParts[currentPart + 1] }}
+        </div>
+        <div class="flex-1 font-bold text-lg py-2 transition-colors text-center bg-black text-white">
+          {{ formParts[currentPart] }}
         </div>
       </div>
       <div
         v-else
         class="flex sm:hidden items-center border-black border-2 rounded-2xl divide-black divide-x-2 overflow-hidden"
       >
-        <div class="flex-1 font-bold text-lg py-2 transition-colors text-center bg-white text-black">
-          {{ formParts[formParts.length - 2] }}
-        </div>
         <div class="flex-1 font-bold text-lg py-2 transition-colors text-center bg-black text-white">
           {{ formParts[formParts.length - 1] }}
+        </div>
+        <div class="flex-1 font-bold text-lg py-2 transition-colors text-center bg-white text-black">
+          {{ formParts[formParts.length - 2] }}
         </div>
       </div>
       <main class="py-8">

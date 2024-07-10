@@ -14,7 +14,7 @@ type FilterKeyboardsOptions = {
 function filterKeyboards(
   keyboards: KeyboardsJoinedColorsRow[], 
   options: FilterKeyboardsOptions
-): FilterReturn<KeyboardsJoinedColorsRow> & { blackOrWhite: KeyboardsJoinedColorsRow[] } {
+): FilterReturn<KeyboardsJoinedColorsRow> {
   const matchingMainColor = [] as KeyboardsJoinedColorsRow[]
   const matchingSecondaryColor = [] as KeyboardsJoinedColorsRow[]
   const blackOrWhite = [] as KeyboardsJoinedColorsRow[]
@@ -40,9 +40,8 @@ function filterKeyboards(
   }
 
   return {
-    matching: [...matchingMainColor, ...matchingSecondaryColor],
+    matching: [...matchingMainColor, ...matchingSecondaryColor, ...blackOrWhite],
     other,
-    blackOrWhite,
   }
 }
 

@@ -1,3 +1,3 @@
 export default function() {
-  return useLocalStorage('order', {} as CustomerOrder)
+  return ref({} as CustomerOrder)
 }

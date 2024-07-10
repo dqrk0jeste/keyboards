@@ -19,7 +19,7 @@ export type FilterReturn<T> = {
 export type FormBody = z.infer<typeof bodySchema>
 
 export type FormReturn = {
-  keyboards: FilterReturn<KeyboardsJoinedColorsRow> & { blackOrWhite: KeyboardsJoinedColorsRow[] },
+  keyboards: FilterReturn<KeyboardsJoinedColorsRow>,
   switches: FilterReturn<Switch>,
   keycaps: FilterReturn<Keycap>,
 }
