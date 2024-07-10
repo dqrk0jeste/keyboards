@@ -11,7 +11,6 @@ export const formats = [
 export type Format = typeof formats[number]
 export const zFormats = z.enum(formats)
 
-
 export const switchTypes = [
   "linear",
   "tactile",

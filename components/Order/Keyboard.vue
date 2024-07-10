@@ -16,32 +16,43 @@ const switches = ref([] as Switch[])
 const keycaps = ref([] as Keycap[])
 
 if(hasCompletedForm) {
-  keyboards.value = response.matchingKeyboards
-  switches.value = response.matchingSwitches
-  keycaps.value = response.matchingKeycaps
+  keyboards.value = response.keyboards.matching
+  switches.value = response.switches.matching
+  keycaps.value = response.keycaps.matching
 } else {
-  await getAllEverything()
-}
-
-async function getAllEverything() {
   await Promise.all([
-    getAllKeyboards(),
-    getAllSwitches(),
-    getAllKeycaps(),
+    getKeyboards(),
+    getSwitches(),
+    getKeycaps(),
   ])
 }
 
-async function getAllKeyboards() {
+
+function loadOtherKeyboards() {
+  if(response) {
+    keyboards.value = [...keyboards.value, ...response.keyboards.other]
+  }
+}
+
+function loadOtherSwitches() {
+  if(response) {
+    switches.value = [...switches.value, ...response.switches.other]
+  }
+
+}
+function loadOtherKeycaps() {
+  if(response) {
+    keycaps.value = [...keycaps.value, ...response.keycaps.other]
+  }
+}
+async function getKeyboards() {
   keyboards.value = await $fetch("/api/keyboards")
-  hasLoadedAllKeyboards.value = true
 }
-async function getAllSwitches() {
+async function getSwitches() {
   switches.value = await $fetch("/api/switches")
-  hasLoadedAllSwitches.value = true
 }
-async function getAllKeycaps() {
+async function getKeycaps() {
   keycaps.value = await $fetch("/api/keycaps")
-  hasLoadedAllKeycaps.value = true
 }
 </script>
 

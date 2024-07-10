@@ -1,23 +1,6 @@
-import { z } from "zod"
 import { db } from "../db"
 import { keyboards, Switch, switches, Keycap, keycaps, keyboardColors } from "../db/schema"
-import { and, asc, eq, gt, or } from "drizzle-orm"
-import { colors as colorOptions, formats as formatOptions, switchTypes as switchTypeOptions } from "../utils/enums"
-import { keyboardsJoinedColorRow, KeyboardsJoinedColorsRow } from "../utils/translate"
-
-const formats = z.enum(formatOptions)
-const colors = z.enum(colorOptions)
-const switchTypes = z.enum(switchTypeOptions)
-
-const bodySchema = z.object({
-  format: formats,
-  pudding: z.boolean(),
-  mainColor: colors,
-  otherColor: colors.or(z.null()),
-  switchTypes: switchTypes.array(),
-  bluetooth: z.boolean(),
-  wireless: z.boolean(),
-})
+import { asc, eq, gt } from "drizzle-orm"
 
 type FilterKeyboardsOptions = {
   format: Format,
@@ -28,10 +11,14 @@ type FilterKeyboardsOptions = {
   pudding: boolean,
 }
 
-function filterKeyboards(keyboards: KeyboardsJoinedColorsRow[], options: FilterKeyboardsOptions) {
+function filterKeyboards(
+  keyboards: KeyboardsJoinedColorsRow[], 
+  options: FilterKeyboardsOptions
+): FilterReturn<KeyboardsJoinedColorsRow> & { blackOrWhite: KeyboardsJoinedColorsRow[] } {
   const matchingMainColor = [] as KeyboardsJoinedColorsRow[]
   const matchingSecondaryColor = [] as KeyboardsJoinedColorsRow[]
   const blackOrWhite = [] as KeyboardsJoinedColorsRow[]
+  const other = [] as KeyboardsJoinedColorsRow[]
 
   for(const keyboard of keyboards) {
     if(
@@ -46,24 +33,33 @@ function filterKeyboards(keyboards: KeyboardsJoinedColorsRow[], options: FilterK
         matchingSecondaryColor.push(keyboard)
       } else if(keyboard.color === "white" || keyboard.color === "black") {
         blackOrWhite.push(keyboard)
+      } else {
+        other.push(keyboard)
       }
     }
   }
 
   return {
     matching: [...matchingMainColor, ...matchingSecondaryColor],
+    other,
     blackOrWhite,
   }
 }
 
-function filterSwitches(switches: Switch[], switchType: SwitchType): Switch[] {
+function filterSwitches(switches: Switch[], switchTypes: SwitchType[]): FilterReturn<Switch> {
   const matching = [] as Switch[]
+  const other = [] as Switch[]
   for(const s of switches) {
-    if(s.type === switchType) {
+    if(switchTypes.includes(s.type)) {
       matching.push(s)
+    } else {
+      other.push(s)
     }
   }
-  return matching
+  return {
+    matching,
+    other,
+  }
 }
 
 type FilterKeycapsOptions = {
@@ -77,8 +73,9 @@ type Ranking<T> = {
   rank: number,
 }
 
-function filterKeycaps(keycaps: Keycap[], options: FilterKeycapsOptions): Keycap[] {
+function filterKeycaps(keycaps: Keycap[], options: FilterKeycapsOptions): FilterReturn<Keycap> {
   const matching = [] as Ranking<Keycap>[]
+  const other = [] as Keycap[]
 
   for(const keycap of keycaps) {
     const entry = {
@@ -106,20 +103,25 @@ function filterKeycaps(keycaps: Keycap[], options: FilterKeycapsOptions): Keycap
       continue
     } else if(!options.pudding || keycap.isPudding){
       matching.push(entry)
+    } else {
+      other.push(entry.value)
     }
   }
 
-  return matching
-    .sort((a, b) => {
-      if(a.rank === b.rank) {
-        return a.value.price - b.value.price
-      }
-      return b.rank - a.rank
-    })
-    .map(r => r.value)
+  return {
+    matching: matching
+      .sort((a, b) => {
+        if(a.rank === b.rank) {
+          return a.value.price - b.value.price
+        }
+        return b.rank - a.rank
+      })
+      .map(r => r.value),
+    other,
+  }
 }
 
-export default defineEventHandler(async (e) => {
+export default defineEventHandler(async (e): Promise<FormReturn> => {
   const body = await readBody(e)
   const parsed = bodySchema.safeParse(body)
   if(!parsed.success) {
@@ -139,8 +141,6 @@ export default defineEventHandler(async (e) => {
     wireless
   } = parsed.data
 
-  const isValidSwitchTypeQuerry = or(...switchTypes.map(st => eq(switches.type, st)))
-
   const [
     keyboardsJoinedColors,
     switchOptions,
@@ -155,7 +155,7 @@ export default defineEventHandler(async (e) => {
     db
       .select()
       .from(switches)
-      .where(and(gt(switches.stock, 0), isValidSwitchTypeQuerry))
+      .where(gt(switches.stock, 0))
       .orderBy(asc(switches.price)),
     db
       .select()
@@ -163,15 +163,14 @@ export default defineEventHandler(async (e) => {
       .where(gt(keycaps.stock, 0)),
   ])
 
-  const keyboardResponse = filterKeyboards(keyboardsJoinedColors, { format, mainColor, otherColor, bluetooth, wireless, pudding })
-  const switchResponse = switchOptions
-  const keycapResponse = filterKeycaps(keycapOptions, { pudding, mainColor, otherColor })
+  const filteredKeyboards = filterKeyboards(keyboardsJoinedColors, { format, mainColor, otherColor, bluetooth, wireless, pudding })
+  const filteredSwitches = filterSwitches(switchOptions, switchTypes)
+  const filteredKeycaps = filterKeycaps(keycapOptions, { pudding, mainColor, otherColor })
 
   return {
-    matchingKeyboards: keyboardResponse.matching,
-    blackOrWhiteKeyboards: keyboardResponse.blackOrWhite,
-    matchingSwitches: switchResponse,
-    matchingKeycaps: keycapResponse,
+    keyboards: filteredKeyboards,
+    switches: filteredSwitches,
+    keycaps: filteredKeycaps,
   }
 })
 
