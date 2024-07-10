@@ -19,7 +19,7 @@ async function submitForm() {
     <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold">
       Vaša narudžba
     </h1>
-    <form class="py-8" @submit="submitForm">
+    <form class="py-8" @submit.prevent="submitForm">
       <div class="hidden sm:flex items-center border-black border-2 rounded-2xl divide-black divide-x-2 overflow-hidden">
         <div 
           v-for="(name, index) in formParts"
@@ -54,7 +54,7 @@ async function submitForm() {
           {{ formParts[formParts.length - 1] }}
         </div>
       </div>
-      <main class="py-8">
+      <main class="pt-8">
         <KeepAlive>
           <OrderKeyboard v-if="currentPart === 0" @next="currentPart++"/>
           <OrderMods v-else-if="currentPart === 1" @prev="currentPart--" @next="currentPart++"/>

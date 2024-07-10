@@ -60,44 +60,46 @@ function loadOtherKeycaps() {
 
 <template>
   <div class="space-y-8">
-    <div class="max-w-screen-sm m-auto space-y-4">
-      <OrderSelectModal
-        type="keyboards"
-        :items="keyboards"
-        :other="otherKeyboards"
-        :hasCompletedForm
-        @loadAll="loadOtherKeyboards"
-        @selected="(item) => order.keyboardColorId = item.id"
-      >
-        Odaberi svoju tastaturu
-      </OrderSelectModal>
-      <OrderSelectModal
-        type="switches"
-        :items="switches"
-        :other="otherSwitches"
-        :hasCompletedForm
-        @loadAll="loadOtherSwitches"
-        @selected="(item) => order.switchId = item.id"
-      >
-        Odaberi svoje svičeve
-      </OrderSelectModal>
-      <OrderSelectModal
-        type="keycaps"
-        :items="keycaps"
-        :other="otherKeycaps"
-        :hasCompletedForm
-        @loadAll="loadOtherKeycaps"
-        @selected="(item) => order.keycapId = item.id"
-      >
-        Odaberi svoje kapice
-      </OrderSelectModal>
+    <div class="border-black sm:border-2 rounded-2xl sm:p-8">
+      <div class="max-w-screen-sm m-auto space-y-4">
+        <OrderSelectModal
+          type="keyboards"
+          :items="keyboards"
+          :other="otherKeyboards"
+          :hasCompletedForm
+          @loadAll="loadOtherKeyboards"
+          @selected="(item) => order.keyboardColorId = item.id"
+        >
+          Odaberi svoju tastaturu
+        </OrderSelectModal>
+        <OrderSelectModal
+          type="switches"
+          :items="switches"
+          :other="otherSwitches"
+          :hasCompletedForm
+          @loadAll="loadOtherSwitches"
+          @selected="(item) => order.switchId = item.id"
+        >
+          Odaberi svoje svičeve
+        </OrderSelectModal>
+        <OrderSelectModal
+          type="keycaps"
+          :items="keycaps"
+          :other="otherKeycaps"
+          :hasCompletedForm
+          @loadAll="loadOtherKeycaps"
+          @selected="(item) => order.keycapId = item.id"
+        >
+          Odaberi svoje kapice
+        </OrderSelectModal>
+      </div>
     </div>
     <div class="flex justify-end">
       <Button 
         type="button"
         :disabled="!valid"
         @click="emit('next')"
-        class="font-bold text-lg py-6 px-6"
+        class="font-bold text-lg py-6 px-6 sm:mr-8"
       >
         Sledeće
       </Button>

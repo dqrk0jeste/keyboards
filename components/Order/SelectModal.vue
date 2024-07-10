@@ -51,7 +51,7 @@ function select(item: Item) {
     @click="isActive = true"
     class="w-full flex items-center gap-3 p-2 rounded-lg border-2 border-black hover:bg-gray-50 bg-white"
   >
-    <p class="text-4xl font-bold px-8 py-4">
+    <p class="text-2xl sm:text-4xl font-bold px-6 sm:px-8 py-4">
       ?
     </p>
     <p class="text-lg md:text-2xl font-bold">
@@ -61,10 +61,10 @@ function select(item: Item) {
   <BaseModal 
     :isActive="isActive" 
     @clicked-outside="isActive = false"
-    class="sm:min-w-[450px] border-2 border-black rounded-2xl p-5 bg-white drop-shadow-lg shadow-gray-500 space-y-4"
+    class="w-[90%] max-w-screen-sm border-2 border-black rounded-2xl p-5 bg-white drop-shadow-lg shadow-gray-500 space-y-4"
   >
   <div class="text-center rounded-full border-black border-2 px-2 py-5">
-    <h3 class="xs:text-md sm:text-xl md:text-3xl font-bold px-4">
+    <h3 class="text-lg sm:text-2xl md:text-3xl font-bold px-4">
       <template v-if="hasCompletedForm">
         Odgovaraju Vašoj pretrazi
       </template>
@@ -84,7 +84,7 @@ function select(item: Item) {
     </div>
     <template v-if="hasCompletedForm && hasLoadedAll">
       <div class="text-center rounded-full border-black border-2 px-2 py-5">
-        <h3 class="xs:text-md sm:text-xl md:text-3xl font-bold px-4">
+        <h3 class="text-md sm:text-2xl md:text-3xl font-bold px-4">
           Ostale opcije
         </h3>
       </div>
@@ -103,7 +103,7 @@ function select(item: Item) {
       v-else-if="props.hasCompletedForm"
       @click="emit('loadAll'); hasLoadedAll = true"
     >
-      <h3 class="xs:text-md sm:text-xl md:text-3xl font-bold px-4">
+      <h3 class="text-md sm:text-xl md:text-3xl font-bold px-4">
         Pogledaj ostale
       </h3>
     </button>
