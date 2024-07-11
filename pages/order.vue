@@ -2,7 +2,7 @@
 const order = useOrder()
 
 const formParts = [ "Tastatura", "Modovi", "Lični podaci", "Pregled" ] as const
-const currentPart = ref(2)
+const currentPart = ref(0)
 
 async function submitForm() {
   const parsed = orderSchema.safeParse(order)

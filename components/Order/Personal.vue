@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { z } from "zod"
 import { toTypedSchema } from "@vee-validate/zod"
-import { useForm } from "vee-validate";
-import { NumberField } from "../ui/number-field";
+import { useForm } from "vee-validate"
 
 const emit = defineEmits<{
   prev: [],
@@ -11,25 +10,16 @@ const emit = defineEmits<{
 
 const order = useOrder()
 
-const valid = computed(() => {
-  if(order.value.name) {
-    return true
-  }
-  return false
-})
-
 const schema = toTypedSchema(z.object({
   name: z
     .string({
       message: "Obavezno!"
     })
-    .min(2, "Ime mora biti duže od 1 karaktera")
     .max(255, "Blago tvojim roditeljima!"),
   surname: z
     .string({
       message: "Obavezno!"
     })
-    .min(2, "Prezime mora biti duže od 1 karaktera")
     .max(255, "Blago tvojim roditeljima!"),
   postalCode: z
     .number({
@@ -41,127 +31,48 @@ const schema = toTypedSchema(z.object({
     .string({
       message: "Obavezno!"
     })
-    .min(2, "Ime grada mora biti duže od 1 karaktera")
     .max(255, "Sigurni ste da taj grad postoji?!"),
   street: z
     .string({
       message: "Obavezno!"
     })
-    .min(2, "Ime mora biti duže od 1 karaktera")
     .max(255, "Sigurni ste da ta ulica postoji?!"),
-  houseNumber: z
-    .number({
+  phoneNumber: z
+    .string({
       message: "Obavezno!"
     })
-    .min(1, "Ulični broj mora biti veći od 1")
-    .max(1000000, "To je jedna dugačka ulica!"),
-  phoneNumber: zPhone,
+    .max(255, "Sigurni ste da da je ovo Vaš broj telefona?")
 }))
 
 const form = useForm({
   validationSchema: schema,
 })
+
+const submitPart = form.handleSubmit((values) => {
+  order.value.name = values.name + " " + values.surname
+  order.value.address = values.street + ", " + values.postalCode + ", " + values.city
+  order.value.phoneNumber = values.phoneNumber
+  emit("next")
+})
 </script>
 
 <template>
   <form class="space-y-8" @submit="emit('next')">
-    <div class="border-black sm:border-2 rounded-2xl sm:p-8 space-y-6">
+    <div class="border-black sm:border-2 rounded-2xl sm:p-8 space-y-4">
       <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold">
         Vaši podaci
       </h2>
-      <div class="flex gap-6 flex-col sm:flex-row w-full">
-        <FormField v-slot="{ componentField }" name="name">
-          <FormItem>
-            <FormLabel>
-              <span class="text-lg font-bold">
-                Ime
-              </span>
-            </FormLabel>
-            <FormControl>
-              <Input placeholder="shadcn" v-bind="componentField"/>
-            </FormControl>
-            <FormDescription />
-            <FormMessage />
-          </FormItem>
-        </FormField>
-        <FormField v-slot="{ componentField }" name="surname">
-          <FormItem>
-            <FormLabel>
-              <span class="text-lg font-bold">
-                Prezime
-              </span>
-            </FormLabel>
-            <FormControl>
-              <Input placeholder="shadcn" v-bind="componentField"/>
-            </FormControl>
-            <FormDescription />
-            <FormMessage />
-          </FormItem>
-        </FormField>
-      </div>
-      <div>
-        <div class="flex gap-6 flex-col sm:flex-row">
-          <FormField v-slot="{ componentField }" name="postalCode">
-            <FormItem>
-              <FormLabel>
-                <span class="text-lg font-bold">
-                  Poštanski broj
-                </span>
-              </FormLabel>
-              <NumberField>
-                <NumberFieldContent>
-                  <FormControl>
-                    <NumberFieldInput @update:model-value="(value) => form.setFieldValue('postalCode', value)" class="max-w-36"/>
-                  </FormControl>
-                </NumberFieldContent>
-              </NumberField>
-              <FormDescription />
-              <FormMessage />
-            </FormItem>
-          </FormField>
-          <FormField v-slot="{ componentField }" name="city">
-            <FormItem>
-              <FormLabel>
-                <span class="text-lg pl-3 font-bold">
-                  Grad
-                </span>
-              </FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" v-bind="componentField"/>
-              </FormControl>
-              <FormDescription />
-              <FormMessage />
-            </FormItem>
-          </FormField>
+      <div class="flex gap-6 flex-col sm:flex-row sm:gap-16">
+        <div class="space-y-4 max-w-screen-xs">
+          <OrderField name="name" title="Ime" type="text"/>
+          <OrderField name="surname" title="Prezime" type="text"/>
+          <OrderField name="phoneNumber" title="Broj telefona" type="text"/>
         </div>
-        <FormField v-slot="{ componentField }" name="street">
-          <FormItem>
-            <FormLabel>
-              <span class="text-lg pl-3 font-bold">
-                Ulica
-              </span>
-            </FormLabel>
-            <FormControl>
-              <Input placeholder="shadcn" v-bind="componentField"/>
-            </FormControl>
-            <FormDescription />
-            <FormMessage />
-          </FormItem>
-        </FormField>
-        <FormField v-slot="{ componentField }" name="houseNumber">
-          <FormItem>
-            <FormLabel>
-              <span class="text-lg pl-3 font-bold">
-                Broj
-              </span>
-            </FormLabel>
-            <FormControl>
-              <Input placeholder="shadcn" v-bind="componentField"/>
-            </FormControl>
-            <FormDescription />
-            <FormMessage />
-          </FormItem>
-        </FormField>
+        <div class="space-y-4 max-w-screen-xs">
+          <OrderField name="postalCode" title="Poštanski broj" type="number"/>
+          <OrderField name="city" title="Grad" type="text"/>
+          <OrderField name="street" title="Ulica i broj" type="text"/>
+        </div>
       </div>
     </div>
     <div class="flex justify-between">
@@ -173,8 +84,8 @@ const form = useForm({
         Prethodno
       </Button>
       <Button 
-        type="button"
-        @click="emit('next')"
+        type="submit"
+        @click.prevent="submitPart"
         class="font-bold text-lg py-6 px-6 sm:mr-8"
       >
         Sledeće
