@@ -107,6 +107,7 @@ export const orders = pgTable('orders', {
   keycapId: uuid('keycap_id').references(() => keycaps.id).notNull(),
   handlubedSwitches: boolean('handlubed_switches').notNull(),
   extraFoam: boolean('extra_foam').notNull(),
+  tapeMod: boolean('tape_mod').notNull(),
   name: varchar('name', {
     length: 255,
   }).notNull(),

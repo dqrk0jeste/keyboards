@@ -45,7 +45,10 @@ function filterKeyboards(
   }
 }
 
-function filterSwitches(switches: Switch[], switchTypes: SwitchType[]): FilterReturn<Switch> {
+function filterSwitches(
+  switches: Switch[],
+  switchTypes: SwitchType[],
+): FilterReturn<Switch> {
   const matching = [] as Switch[]
   const other = [] as Switch[]
   for(const s of switches) {
@@ -72,7 +75,10 @@ type Ranking<T> = {
   rank: number,
 }
 
-function filterKeycaps(keycaps: Keycap[], options: FilterKeycapsOptions): FilterReturn<Keycap> {
+function filterKeycaps(
+  keycaps: Keycap[],
+  options: FilterKeycapsOptions
+): FilterReturn<Keycap> {
   const matching = [] as Ranking<Keycap>[]
   const other = [] as Keycap[]
 
@@ -98,12 +104,14 @@ function filterKeycaps(keycaps: Keycap[], options: FilterKeycapsOptions): Filter
       }
     }
 
+    if(options.pudding && keycap.isPudding) {
+      entry.rank += 3
+    } 
+
     if(entry.rank === 0) {
-      continue
-    } else if(!options.pudding || keycap.isPudding){
-      matching.push(entry)
-    } else {
       other.push(entry.value)
+    } else {
+      matching.push(entry)
     }
   }
 

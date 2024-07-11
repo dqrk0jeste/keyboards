@@ -34,9 +34,9 @@ if(hasCompletedForm) {
 }
 
 const valid = computed(() => 
-  order.value.keyboardColorId 
-  && order.value.switchId
-  && order.value.keycapId  
+  order.value.keyboardColor
+  && order.value.switches
+  && order.value.keycaps
 )
 
 function loadOtherKeyboards() {
@@ -68,7 +68,7 @@ function loadOtherKeycaps() {
           :other="otherKeyboards"
           :hasCompletedForm
           @loadAll="loadOtherKeyboards"
-          @selected="(item) => order.keyboardColorId = item.id"
+          @selected="(item) => order.keyboardColor = item as KeyboardsJoinedColorsRow"
         >
           Odaberi svoju tastaturu
         </OrderSelectModal>
@@ -78,7 +78,7 @@ function loadOtherKeycaps() {
           :other="otherSwitches"
           :hasCompletedForm
           @loadAll="loadOtherSwitches"
-          @selected="(item) => order.switchId = item.id"
+          @selected="(item) => order.switches = item as Switch"
         >
           Odaberi svoje svičeve
         </OrderSelectModal>
@@ -88,7 +88,7 @@ function loadOtherKeycaps() {
           :other="otherKeycaps"
           :hasCompletedForm
           @loadAll="loadOtherKeycaps"
-          @selected="(item) => order.keycapId = item.id"
+          @selected="(item) => order.keycaps = item as Keycap"
         >
           Odaberi svoje kapice
         </OrderSelectModal>

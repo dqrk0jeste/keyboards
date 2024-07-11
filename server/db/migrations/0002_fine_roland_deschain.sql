@@ -1,0 +1,1 @@
+ALTER TABLE "orders" ADD COLUMN "tape_mod" boolean NOT NULL;

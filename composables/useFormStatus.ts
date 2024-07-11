@@ -7,10 +7,13 @@ type T = {
   response: null,
   body: null,
 }
+
 export default function() {
-  return ref<T>({
-    hasCompletedForm: false,
-    response: null,
-    body: null,
+  return useState<T>('form-status', () => {
+    return {
+      hasCompletedForm: false,
+      response: null,
+      body: null,
+    }
   })
 }

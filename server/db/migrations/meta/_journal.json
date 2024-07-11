@@ -15,6 +15,13 @@
       "when": 1719046061754,
       "tag": "0001_plain_wolf_cub",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1720694810932,
+      "tag": "0002_fine_roland_deschain",
+      "breakpoints": true
     }
   ]
 }
