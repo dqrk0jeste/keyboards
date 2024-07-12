@@ -6,12 +6,15 @@ import type { KeyboardsJoinedColorsRow } from '~/server/utils/translate'
 const props = defineProps<{
   item: KeyboardsJoinedColorsRow,
   type: "keyboards",
+  locked?: boolean,
 } | {
   item: Switch,
   type: "switches",
+  locked?: boolean,
 } | {
   item: Keycap,
   type: "keycaps",
+  locked?: boolean,
 }>()
 
 function colorBasedOnSwitchType(type: SwitchType): string {
@@ -25,7 +28,7 @@ function colorBasedOnSwitchType(type: SwitchType): string {
 </script>
 
 <template>
-  <div class="flex gap-3 items-center p-2 rounded-lg hover:bg-gray-50">
+  <div class="flex gap-3 items-center p-2 rounded-lg">
     <img 
       src="@/assets/images/keyboard_1.jpg" 
       class="w-20 sm:w-28 rounded-md"
@@ -59,6 +62,7 @@ function colorBasedOnSwitchType(type: SwitchType): string {
           </span>
         </p>
         <NuxtLink
+          v-if="!props.locked"
           :to="`/${ props.type }/${ props.item.id }`" 
           class="text-2xl"
           @click.stop

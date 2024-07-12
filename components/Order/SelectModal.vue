@@ -43,7 +43,7 @@ function select(item: Item) {
     :type="props.type"
     :item="selected"
     @click="isActive = true"
-    class="border-2 border-black bg-white"
+    class="border-2 border-black bg-white hover:bg-gray-50"
   />
   <button 
     v-else 
@@ -79,7 +79,7 @@ function select(item: Item) {
         :item="item" 
         :type="props.type"
         @click="select(item)"
-        class="border-transparent border-2 hover:border-black"
+        class="border-transparent border-2 hover:border-black hover:bg-gray-50"
       />
     </div>
     <template v-if="hasCompletedForm && hasLoadedAll">

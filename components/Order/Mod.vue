@@ -1,42 +1,46 @@
 <script setup lang="ts">
-const { mod } = defineProps<{
+const props = withDefaults(defineProps<{
   index: number,
   mod: Mod,
-}>()
+  locked?: boolean,
+}>(),
+{
+  locked: false,
+})
 
 const order = useOrder()
-const state = ref(mod.required)
+const state = ref(props.mod.required || order.value[props.mod.key])
 
 watch(state, () => {
-  if(mod.key) {
-    order.value[mod.key] = state.value
+  if(props.mod.key) {
+    order.value[props.mod.key] = state.value
   }
 })
 </script>
 
 <template>
   <AccordionItem
-    :value="index.toString()"
+    :value="props.index.toString()"
     class="bg-white"
   >
-    <AccordionTrigger class="hover:no-underline ">
+    <AccordionTrigger class="hover:no-underline">
       <div class="flex items-center gap-3">
         <h3 class="text-xl sm:text-2xl font-bold">
-          {{ mod.title }}
+          {{ props.mod.title }}
         </h3>
         <Switch
           @click.stop
-          :disabled="mod.required"
+          :disabled="props.mod.required || locked"
           v-model:checked="state"
         />
         <p class="text-lg">
-          {{ mod.price ? `+ ${ mod.price } din` : "besplatno"}}
+          {{ props.mod.price ? `+ ${ props.mod.price } din` : "besplatno"}}
         </p>
       </div>
     </AccordionTrigger>
     <AccordionContent>
       <p class="text-lg sm:text-xl">
-        {{ mod.desc }}
+        {{ props.mod.desc }}
       </p>
     </AccordionContent>
   </AccordionItem>
