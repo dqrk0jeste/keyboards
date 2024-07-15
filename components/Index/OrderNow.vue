@@ -4,7 +4,7 @@
       <h4 class="text-center text-balance text-2xl md:text-3xl font-bold">
         Vaša nova tastatura čeka na Vas!
       </h4>
-      <NuxtLink to="/">
+      <NuxtLink to="/form">
         <Button class="text-lg font-bold py-6">
           Započni upitnik
         </Button>

@@ -18,7 +18,7 @@
             Započni upitnik
           </Button>
         </NuxtLink> 
-        <NuxtLink to="/order" class="w-full">
+        <NuxtLink to="/orders" class="w-full">
           <Button variant="outline" class="w-full text-md sm:text-lg font-bold py-6">
             Sastavi sam
           </Button>

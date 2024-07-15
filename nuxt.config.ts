@@ -22,7 +22,7 @@ export default defineNuxtConfig({
     "/": {
       prerender: true,
     },
-    "/order": {
+    "/orders": {
       ssr: false,
     },
     "/form": {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toast, useToast } from '../ui/toast'
+import { useToast } from '../ui/toast'
 
 const emit = defineEmits<{
   prev: [],
@@ -22,6 +22,7 @@ const modsPrice = computed(() => {
 const price = computed(() => keyboardPrice.value + modsPrice.value)
 
 const note = ref("")
+const hasOrdered = ref(false)
 
 const loading = ref(false)
 async function placeOrder() {
@@ -52,17 +53,21 @@ async function placeOrder() {
     checkoutPrice: price.value,
   }
 
-  await $fetch("/api/orders", {
+  const { id } = await $fetch("/api/orders", {
     method: "POST",
     body: orderBody,
   })
 
   loading.value = false
+  hasOrdered.value = true
   const { toast } = useToast()
   toast({
     title: "Hvala Vam na poverenju!",
-    description: "Vaša porudžbina je primljenja.",
+    description: "Vaša porudžbina je primljenja. Preusmeravamo...",
   })
+  setTimeout(() => navigateTo(`/orders/${ id }`, {
+    replace: true,
+  }), 3000)
 }
 </script>
 
@@ -192,6 +197,7 @@ async function placeOrder() {
       </Button>
       <Button 
         type="button"
+        :disabled="loading || hasOrdered"
         @click="placeOrder"
         class="font-bold text-lg py-6 px-6 sm:mr-8"
       >

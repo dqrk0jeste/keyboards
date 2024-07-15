@@ -1,17 +1,6 @@
 <script setup lang="ts">
-const order = useOrder()
-
 const formParts = [ "Tastatura", "Modovi", "Lični podaci", "Pregled" ] as const
 const currentPart = ref(0)
-
-async function submitForm() {
-  const parsed = orderSchema.safeParse(order)
-  if(!parsed.success) {
-
-  }
-  parsed.data
-  // send order
-}
 </script>
 
 <template>
@@ -19,7 +8,7 @@ async function submitForm() {
     <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold">
       Vaša narudžba
     </h1>
-    <form class="py-8" @submit.prevent="submitForm">
+    <form class="py-8" @submit.prevent>
       <div class="hidden sm:flex items-center border-black border-2 rounded-2xl divide-black divide-x-2 overflow-hidden">
         <div 
           v-for="(name, index) in formParts"
