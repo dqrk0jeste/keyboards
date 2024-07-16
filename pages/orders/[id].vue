@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import Progress from '~/components/ui/progress/Progress.vue'
-
 const id = useRoute().params.id as string
 const order = await $fetch(`/api/orders/${ id }`)
 
