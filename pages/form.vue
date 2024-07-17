@@ -7,12 +7,39 @@ const format = ref(null as Format | null)
 const pudding = ref(false)
 const mainColor = ref(null as Color | null)
 const otherColor = ref(null as Color | null)
-const switchType = ref(null as SwitchType | null)
+const switchTypes = ref(new Set<SwitchType>())
 const bluetooth = ref(false)
 const wireless = ref(false)
 
 async function submitForm() {
+  if(!format.value || !mainColor.value || switchTypes.value.size === 0) {
+    throw createError({
+      statusCode: 400,
+    })
+  }
+  const body = {
+    format: format.value,
+    pudding: pudding.value,
+    mainColor: mainColor.value,
+    otherColor: otherColor.value,
+    switchTypes: Array.from(switchTypes.value),
+    bluetooth: bluetooth.value,
+    wireless: wireless.value,
+  }
 
+  const response = await $fetch("/api/form", {
+    method: "POST",
+    body,
+  })
+
+  const form = useFormStatus()
+  form.value = {
+    hasCompletedForm: true,
+    response,
+    body,
+  }
+
+  console.log(form.value)
 }
 </script>
 
@@ -23,8 +50,32 @@ async function submitForm() {
     </h1>
     <form @submit.prevent="submitForm">
       <KeepAlive>
-        <FormFormat v-model="format" v-if="currentPart === 0" @next="currentPart++"/>
-        <FormSwitches v-model="switchType" v-else-if="currentPart === 1" @prev="currentPart--" @next="currentPart++"/>
+        <FormFormat
+          v-model="format"
+          v-if="currentPart === 0"
+          @next="currentPart++"
+        />
+        <FormSwitches
+          v-model="switchTypes"
+          v-else-if="currentPart === 1"
+          @prev="currentPart--"
+          @next="currentPart++"
+        />
+        <FormColors
+          v-model:mainColor="mainColor"
+          v-model:otherColor="otherColor"
+          v-model:pudding="pudding"
+          v-else-if="currentPart === 2"
+          @prev="currentPart--"
+          @next="currentPart++"
+        />
+        <FormConnect
+          v-model:wireless="wireless"
+          v-model:bluetooth="bluetooth"
+          v-else-if="currentPart === 3"
+          @prev="currentPart--"
+          @next="submitForm"
+        />
       </KeepAlive>
     </form>
   </div>

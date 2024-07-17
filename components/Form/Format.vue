@@ -57,6 +57,7 @@ const formats: FormatWithDesc[] = [
     </div>
     <div class="m-auto space-y-8">
       <button 
+        type="button"
         v-for="format in formats"
         :key="format.type"
         :disabled="!available!.includes(format.type)"

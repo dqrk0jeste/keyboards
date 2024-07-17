@@ -36,6 +36,8 @@ function filterKeyboards(
       } else {
         other.push(keyboard)
       }
+    } else {
+      other.push(keyboard)
     }
   }
 
