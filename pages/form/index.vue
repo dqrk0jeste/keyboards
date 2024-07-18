@@ -17,6 +17,15 @@ async function submitForm() {
       statusCode: 400,
     })
   }
+
+  const { start, finish} = useLoadingIndicator({
+    duration: 500,
+    throttle: 200,
+    estimatedProgress: (duration, elapsed) => (2 / Math.PI * 100) * Math.atan(elapsed / duration * 100 / 50),
+  })
+
+  start()
+
   const body = {
     format: format.value,
     pudding: pudding.value,
@@ -39,7 +48,8 @@ async function submitForm() {
     body,
   }
 
-  console.log(form.value)
+  finish()
+  navigateTo("/form/results")
 }
 </script>
 

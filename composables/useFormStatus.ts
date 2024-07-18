@@ -2,10 +2,12 @@ type T = {
   hasCompletedForm: true,
   response: FormReturn,
   body: FormBody,
+  chosen: KeyboardBuild,
 } | {
   hasCompletedForm: false,
   response: null,
   body: null,
+  chosen: null,
 }
 
 export default function() {
@@ -14,6 +16,7 @@ export default function() {
       hasCompletedForm: false,
       response: null,
       body: null,
+      chosen: null,
     }
   })
 }

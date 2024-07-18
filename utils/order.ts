@@ -14,6 +14,12 @@ export type CustomerOrder = {
   note: string | null,
 }
 
+export type KeyboardBuild = {
+  keyboardColor: KeyboardsJoinedColorsRow,
+  switches: Switch,
+  keycaps: Keycap,
+}
+
 export type ModKeys = "handlubedSwitches" | "extraFoam" | "tapeMod"
 
 export type Mod = {

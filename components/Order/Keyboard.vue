@@ -11,6 +11,7 @@ const order = useOrder()
 const {
   hasCompletedForm,
   response,
+  chosen,
 } = useFormStatus().value
 
 const keyboards = ref([] as KeyboardsJoinedColorsRow[])
