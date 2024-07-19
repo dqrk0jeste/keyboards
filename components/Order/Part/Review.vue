@@ -1,18 +1,42 @@
 <script setup lang="ts">
-import { useToast } from '../ui/toast'
+import type { Keycap, Switch } from '~/server/db/schema'
+import type { KeyboardsJoinedColorsRow } from '~/server/utils/translate'
+
+const props = defineProps<{
+  keyboard: {
+    keyboard: KeyboardsJoinedColorsRow | null,
+    switches: Switch | null,
+    keycaps: Keycap | null,
+  },
+  modsProp: {
+    stabilisers: true,
+    handlubedSwitches: boolean,
+    extraFoam: boolean,
+    tapeMod: boolean,
+  },
+  personal: {
+    name: string,
+    address: string,
+    phoneNumber: string,
+  },
+}>()
 
 const emit = defineEmits<{
   prev: [],
 }>()
 
-const order = useOrder()
+const note = defineModel<string>({ required: true })
+const priceModel = defineModel<number>("price", { required: true })
 
-const keyboardPrice = computed(() => order.value.keyboardColor!.price + order.value.keycaps!.price + order.value.switches!.price)
+const keyboardPrice = computed(() =>
+  props.keyboard.keyboard!.price
+  + props.keyboard.switches!.price
+  + props.keyboard.keycaps!.price
+)
 
 const modsPrice = computed(() => {
   return mods.reduce((current, mod) => {
-    if(!mod.key) return current;
-    if(order.value[mod.key]) {
+    if(props.modsProp[mod.key]) {
       return current + mod.price
     }
     return current
@@ -21,54 +45,9 @@ const modsPrice = computed(() => {
 
 const price = computed(() => keyboardPrice.value + modsPrice.value)
 
-const note = ref("")
-const hasOrdered = ref(false)
-
-const loading = ref(false)
-async function placeOrder() {
-  loading.value = true
-  const {
-    keyboardColor,
-    switches,
-    keycaps,
-    tapeMod,
-    handlubedSwitches,
-    extraFoam,
-    name,
-    address,
-    phoneNumber,
-  } = order.value
-
-  const orderBody = {
-    keyboardColorId: keyboardColor?.id,
-    keycapId: keycaps?.id,
-    switchId: switches?.id,
-    tapeMod, 
-    handlubedSwitches,
-    extraFoam,
-    name,
-    address,
-    phoneNumber,
-    note: note.value,
-    checkoutPrice: price.value,
-  }
-
-  const { id } = await $fetch("/api/orders", {
-    method: "POST",
-    body: orderBody,
-  })
-
-  loading.value = false
-  hasOrdered.value = true
-  const { toast } = useToast()
-  toast({
-    title: "Hvala Vam na poverenju!",
-    description: "Vaša porudžbina je primljenja. Preusmeravamo...",
-  })
-  setTimeout(() => navigateTo(`/orders/${ id }`, {
-    replace: true,
-  }), 3000)
-}
+watch(price, (value) => {
+  priceModel.value = value
+})
 </script>
 
 <template>
@@ -82,19 +61,19 @@ async function placeOrder() {
           <div class="flex-1 space-y-4 p-4 border-2 border-black rounded-2xl bg-white shadow-md">
             <OrderSelectItem 
               type="keyboards"
-              :item="order.keyboardColor!"
+              :item="props.keyboard.keyboard!"
               locked
               class="border-2 border-black bg-white"
             />
             <OrderSelectItem 
               type="switches"
-              :item="order.switches!"
+              :item="props.keyboard.switches!"
               locked
               class="border-2 border-black bg-white"
             />
             <OrderSelectItem 
               type="keycaps"
-              :item="order.keycaps!"
+              :item="props.keyboard.keycaps!"
               locked
               class="border-2 border-black bg-white"
             />
@@ -104,7 +83,13 @@ async function placeOrder() {
               :disabled="true"
               class="bg-white"
             >
-              <OrderMod v-for="(mod, index) in mods" :mod :index locked/>
+              <OrderMod
+                v-for="(mod, index) in mods"
+                :mod
+                :index
+                locked
+                v-model="props.modsProp[mod.key]"
+              />
             </Accordion>
           </div>
         </div>
@@ -115,13 +100,13 @@ async function placeOrder() {
             </h4>
             <div class="space-y-2 p-4 border-2 border-black rounded-2xl bg-white shadow-md">
               <p class="text-xl">
-                {{ order.name }}
+                {{ props.personal.name }}
               </p>
               <p class="text-xl">
-                {{ order.address }}
+                {{ props.personal.address }}
               </p>
               <p class="text-xl">
-                {{ order.phoneNumber }}
+                {{ props.personal.phoneNumber }}
               </p>
             </div>
           </div>
@@ -196,17 +181,11 @@ async function placeOrder() {
         Prethodno
       </Button>
       <Button 
-        type="button"
-        :disabled="loading || hasOrdered"
-        @click="placeOrder"
+        type="submit"
+        :disabled="false"
         class="font-bold text-lg py-6 px-6 sm:mr-8"
       >
-        <span v-if="loading">
-          Loading
-        </span>
-        <span v-else>
-          Naruči
-        </span>
+        Naruči
       </Button>
     </div>
   </div>

@@ -41,12 +41,8 @@ async function submitForm() {
     body,
   })
 
-  const form = useFormStatus()
-  form.value = {
-    hasCompletedForm: true,
-    response,
-    body,
-  }
+  const formResponse = useFormResponse()
+  formResponse.value = response
 
   finish()
   navigateTo("/form/results")

@@ -8,7 +8,13 @@ const emit = defineEmits<{
   next: [],
 }>() 
 
-const order = useOrder()
+const data = defineModel<{
+  name: string,
+  address: string,
+  phoneNumber: string,
+}>({
+  required: true,
+})
 
 const schema = toTypedSchema(z.object({
   name: z
@@ -49,9 +55,9 @@ const form = useForm({
 })
 
 const submitPart = form.handleSubmit((values) => {
-  order.value.name = values.name + " " + values.surname
-  order.value.address = values.street + ", " + values.postalCode + ", " + values.city
-  order.value.phoneNumber = values.phoneNumber
+  data.value.name = values.name + " " + values.surname
+  data.value.address = values.street + ", " + values.postalCode + ", " + values.city
+  data.value.phoneNumber = values.phoneNumber
   emit("next")
 })
 </script>

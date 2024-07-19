@@ -14,26 +14,21 @@ export type CustomerOrder = {
   note: string | null,
 }
 
-export type KeyboardBuild = {
-  keyboardColor: KeyboardsJoinedColorsRow,
-  switches: Switch,
-  keycaps: Keycap,
-}
-
-export type ModKeys = "handlubedSwitches" | "extraFoam" | "tapeMod"
+export type ModKey = "handlubedSwitches" | "extraFoam" | "tapeMod" | "stabilisers"
 
 export type Mod = {
   title: string,
   desc: string,
   price: number,
-} & ({
-  required: false,
-  key: ModKeys,
-} | {
-  required: true,
-  key: null,
+  required: boolean,
+  key: ModKey,
+} 
+
+export type KeyboardBuild = {
+  keyboard: KeyboardsJoinedColorsRow,
+  switches: Switch,
+  keycaps: Keycap,
 }
-)
 
 export const mods: Mod[] = [
   {
@@ -41,7 +36,7 @@ export const mods: Mod[] = [
     desc: "Najbitnije od najbitnijeg su svakako stabilizatori. Nepodmazani i neuravnoteženi stabilizatori su najčešći razlog lošeg zvuka i osećaja pri kucanju. Zato je njihovo sređivanje nezaobilazan korak naše usluge - svaka tastatura koju naručite kod nas dolazi sa podmazanim i uravnoteženim stabilizatorima.",
     price: 0,
     required: true,
-    key: null,
+    key: "stabilisers",
   },
   {
     title: "Tape Mod",

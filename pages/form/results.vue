@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { KeyboardBuild } from '~/utils/order'
 
-const form = useFormStatus()  
-if(!form.value.hasCompletedForm) {
+const formResponse = useFormResponse()
+if(!formResponse.value) {
   throw createError({
     statusCode: 400,
   })
@@ -12,18 +12,28 @@ const {
   keyboards,
   switches,
   keycaps,
-} = form.value.response
+} = formResponse.value
 
 const bestMatching: KeyboardBuild = {
-  keyboardColor: keyboards.matching[0],
+  keyboard: keyboards.matching[0],
   switches: switches.matching[Math.floor(Math.random() * switches.matching.length)],
   keycaps: keycaps.matching[0],
 }
 
 const cheaperOption: KeyboardBuild = {
-  keyboardColor: findCheapest(keyboards.matching),
+  keyboard: findCheapest(keyboards.matching),
   switches: findCheapest(switches.matching),
   keycaps: findCheapest(keycaps.matching),
+}
+
+function choose(k: KeyboardBuild) {
+  const form = useFormResult()
+  form.value = {
+    chosen: k,
+    response: formResponse.value!,
+  }
+
+  navigateTo("/orders")
 }
 
 interface TWithPrice {
@@ -40,11 +50,6 @@ function findCheapest<T extends TWithPrice>(a: T[]): T {
   // typescript thinks that min is null after this???
   //@ts-ignore
   return min
-}
-
-function choose(k: KeyboardBuild) {
-  form.value.chosen = k
-  navigateTo("/orders")
 }
 
 </script>
@@ -68,7 +73,7 @@ function choose(k: KeyboardBuild) {
           @click="choose(bestMatching)"
           class="p-4 border-2 border-black rounded-2xl bg-white hover:bg-gray-50 w-full"
         >
-          <OrderSelectItem type="keyboards" :item="bestMatching.keyboardColor" locked/>
+          <OrderSelectItem type="keyboards" :item="bestMatching.keyboard" locked/>
           <OrderSelectItem type="keycaps" :item="bestMatching.keycaps" locked/>
           <OrderSelectItem type="switches" :item="bestMatching.switches" locked/>
         </button>
@@ -81,7 +86,7 @@ function choose(k: KeyboardBuild) {
           @click="choose(cheaperOption)"
           class="p-4 border-2 border-black rounded-2xl bg-white hover:bg-gray-50 w-full"
         >
-          <OrderSelectItem type="keyboards" :item="cheaperOption.keyboardColor" locked/>
+          <OrderSelectItem type="keyboards" :item="cheaperOption.keyboard" locked/>
           <OrderSelectItem type="keycaps" :item="cheaperOption.keycaps" locked/>
           <OrderSelectItem type="switches" :item="cheaperOption.switches" locked/>
         </button>

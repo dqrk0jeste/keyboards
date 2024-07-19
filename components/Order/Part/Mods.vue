@@ -3,6 +3,15 @@ const emit = defineEmits<{
   next: [],
   prev: [],
 }>()
+
+const selected = defineModel<{
+  stabilisers: boolean,
+  handlubedSwitches: boolean,
+  extraFoam: boolean,
+  tapeMod: boolean,
+}>({
+  required: true
+})
 </script>
 
 <template>
@@ -23,7 +32,12 @@ const emit = defineEmits<{
           collapsible
           class="bg-white"
         >
-          <OrderMod v-for="(mod, index) in mods" :mod :index />
+          <OrderMod
+            v-for="(mod, index) in mods"
+            :mod
+            :index
+            v-model="selected[mod.key]"
+          />
         </Accordion>
       </div>
     </div>

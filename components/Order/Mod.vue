@@ -1,21 +1,14 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{
+const props = defineProps<{
   index: number,
   mod: Mod,
   locked?: boolean,
-}>(),
-{
-  locked: false,
-})
+}>()
 
-const order = useOrder()
-const state = ref(props.mod.required || order.value[props.mod.key])
+const state = defineModel<boolean>()
 
-watch(state, () => {
-  if(props.mod.key) {
-    order.value[props.mod.key] = state.value
-  }
-})
+// default value
+state.value = state.value || props.mod.required
 </script>
 
 <template>

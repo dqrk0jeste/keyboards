@@ -1,6 +1,6 @@
 import { db } from "../db"
 import { keyboards, Switch, switches, Keycap, keycaps, keyboardColors } from "../db/schema"
-import { asc, eq, gt } from "drizzle-orm"
+import { asc, desc, eq, gt } from "drizzle-orm"
 
 type FilterKeyboardsOptions = {
   format: Format,
@@ -121,7 +121,7 @@ function filterKeycaps(
     matching: matching
       .sort((a, b) => {
         if(a.rank === b.rank) {
-          return a.value.price - b.value.price
+          return b.value.price - a.value.price
         }
         return b.rank - a.rank
       })
@@ -160,12 +160,12 @@ export default defineEventHandler(async (e): Promise<FormReturn> => {
       .from(keyboards)
       .innerJoin(keyboardColors, eq(keyboards.id, keyboardColors.keyboardId))
       .where(gt(keyboardColors.stock, 0))
-      .orderBy(asc(keyboardColors.price)),
+      .orderBy(desc(keyboardColors.price)),
     db
       .select()
       .from(switches)
       .where(gt(switches.stock, 0))
-      .orderBy(asc(switches.price)),
+      .orderBy(desc(switches.price)),
     db
       .select()
       .from(keycaps)

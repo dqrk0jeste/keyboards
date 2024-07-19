@@ -39,7 +39,7 @@ const shouldShowId = ref(false)
           {{ order.phoneNumber }}
         </p>
         <p class="font-bold text-2xl">
-          Cena: {{ order.checkoutPrice }}
+          Cena: {{ order.checkoutPrice }} din
         </p>
       </div>
     </section>
