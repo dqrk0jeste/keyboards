@@ -53,7 +53,7 @@ const valid = computed(() => mainColor.value)
       </div>
       <div v-if="mainColor" class="space-y-2">
         <p class="text-xl">
-          Ukoliko želite, možete izabrati još jednu boju (nije obavezno).
+          Ukoliko želite, možete izabrati još jednu boju. <span class="text-gray-600 text-lg">(nije obavezno)</span>
         </p>
         <div>
           <option
@@ -69,42 +69,46 @@ const valid = computed(() => mainColor.value)
           >
           </option>
         </div>
-        <p class="text-xl text-gray-600">
+        <p class="text-lg text-gray-600">
           Napomena: Imajte u vidu da ova boja manje utiče u algoritmu od one prve.
         </p>
       </div>
       <div class="space-y-2">
-        <p class="text-xl">
-          U ponudi imamo i puding kapice koje sa RGB-om izgledaju odlično.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 items-center sm:pl-4">
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-8 items-center">
           <img
             src="@/assets/images/keyboard_1.jpg"
             alt="puding kapice"
-            class="max-w-[200px] rounded-2xl"
+            class="w-[90%] sm:max-w-[200px] rounded-2xl"
           >
-          <div class="flex gap-4 items-center">
-            <Switch @update:checked="pudding = !pudding"/>
+          <div class="space-y-4">
             <p class="text-xl">
-              Želim puding kapice.
+              U ponudi imamo i puding kapice koje sa RGB-om izgledaju odlično.
             </p>
+            <div class="flex gap-4 items-center">
+              <Switch @update:checked="pudding = !pudding"/>
+              <p class="text-xl text-gray-600">
+                Želim puding kapice.
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
     <div class="flex justify-between">
       <Button 
+        variant="outline"
         type="button"
         @click="emit('prev')"
-        class="font-bold text-lg py-6 px-6 sm:ml-8"
+        class="font-bold text-lg py-6 px-6 sm:ml-8 border-2 border-black shadow-md"
       >
         Prethodno
       </Button>
       <Button 
+        variant="outline"
         type="button"
         :disabled="!valid"
         @click="emit('next')"
-        class="font-bold text-lg py-6 px-6 sm:mr-8"
+        class="font-bold text-lg py-6 px-6 sm:mr-8 border-2 border-black shadow-md"
       >
         Sledeće
       </Button>

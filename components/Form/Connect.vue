@@ -35,9 +35,10 @@ const emit = defineEmits<{
     </div>
     <div class="flex justify-between">
       <Button 
+        variant="outline"
         type="button"
         @click="emit('prev')"
-        class="font-bold text-lg py-6 px-6 sm:ml-8"
+        class="font-bold text-lg py-6 px-6 sm:ml-8 border-2 border-black shadow-md"
       >
         Prethodno
       </Button>

@@ -72,7 +72,7 @@ const formats: FormatWithDesc[] = [
           alt="100% keyboard format"
           class="w-full max-w-screen-xs rounded-2xl"
         >
-        <div class="space-y-2 w-full">
+        <div class="space-y-2 w-full text-left">
           <h3 class="font-bold text-2xl sm:text-4xl">
             {{ format.type }}
           </h3> 
@@ -84,10 +84,11 @@ const formats: FormatWithDesc[] = [
     </div>
     <div class="flex justify-end">
       <Button 
+        variant="outline"
         type="button"
         :disabled="!selected"
         @click="emit('next')"
-        class="font-bold text-lg py-6 px-6 sm:mr-8"
+        class="font-bold text-lg py-6 px-6 sm:mr-8 border-2 border-black shadow-md"
       >
         Sledeće
       </Button>

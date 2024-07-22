@@ -10,7 +10,7 @@ const props = defineProps<{
   <FormField v-slot="{ componentField }" :name="props.name">
     <FormItem>
       <FormLabel>
-        <span class="text-lg font-bold">
+        <span class="text-lg sm:text-xl font-bold">
           {{ props.title }}
         </span>
       </FormLabel>

@@ -3,7 +3,7 @@ const props = defineProps<{
   currentPart: number,
 }>() 
 
-const formParts = [ "Tastatura", "Modovi", "Lični podaci", "Pregled" ] as const
+const formParts = [ "Tastatura", "Modovi", "Vaši podaci", "Pregled" ] as const
 </script>
 
 <template>

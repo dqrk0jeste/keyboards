@@ -59,8 +59,7 @@ async function placeOrder() {
     body: orderBody,
   })
 
-  const formResult = useFormResult()
-  formResult.value = null
+  removeFormResult()
 
   finish()
   navigateTo("/orders/" + id)
@@ -69,8 +68,8 @@ async function placeOrder() {
 
 <template>
   <div class="max-w-screen-xl m-auto py-16 px-4">
-    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold">
-      Vaša narudžba
+    <h1 class="text-4xl sm:text-5xl font-bold">
+      Porudžbina
     </h1>
     <form class="py-8" @submit.prevent="placeOrder">
       <OrderTopBar :currentPart/>

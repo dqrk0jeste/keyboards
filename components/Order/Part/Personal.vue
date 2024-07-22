@@ -64,17 +64,17 @@ const submitPart = form.handleSubmit((values) => {
 
 <template>
   <form class="space-y-8" @submit="emit('next')">
-    <div class="border-black sm:border-2 rounded-2xl sm:p-8 space-y-4">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold">
+    <div class="border-black sm:border-2 rounded-2xl sm:p-8 sm:shadow-md sm:bg-white sm:space-y-4">
+      <h2 class="hidden sm:block text-2xl sm:text-3xl md:text-4xl font-bold">
         Vaši podaci
       </h2>
-      <div class="flex gap-6 flex-col sm:flex-row sm:gap-16">
-        <div class="space-y-4 max-w-screen-xs">
+      <div class="flex gap-4 flex-col sm:flex-row sm:gap-16">
+        <div class="space-y-4">
           <OrderField name="name" title="Ime" type="text"/>
           <OrderField name="surname" title="Prezime" type="text"/>
           <OrderField name="phoneNumber" title="Broj telefona" type="text"/>
         </div>
-        <div class="space-y-4 max-w-screen-xs">
+        <div class="space-y-4">
           <OrderField name="postalCode" title="Poštanski broj" type="number"/>
           <OrderField name="city" title="Grad" type="text"/>
           <OrderField name="street" title="Ulica i broj" type="text"/>
@@ -83,16 +83,18 @@ const submitPart = form.handleSubmit((values) => {
     </div>
     <div class="flex justify-between">
       <Button 
+        variant="outline"
         type="button"
         @click="emit('prev')"
-        class="font-bold text-lg py-6 px-6 sm:ml-8"
+        class="font-bold text-lg py-6 px-6 sm:ml-8 border-black border-2 shadow-md"
       >
         Prethodno
       </Button>
       <Button 
+        variant="outline"
         type="submit"
         @click.prevent="submitPart"
-        class="font-bold text-lg py-6 px-6 sm:mr-8"
+        class="font-bold text-lg py-6 px-6 sm:ml-8 border-black border-2 shadow-md"
       >
         Sledeće
       </Button>

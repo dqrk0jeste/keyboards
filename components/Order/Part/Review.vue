@@ -52,7 +52,6 @@ watch(price, (value) => {
 
 <template>
   <div class="space-y-8">
-    <div class="border-black sm:border-2 rounded-2xl sm:p-8 space-y-4">
       <div class="flex gap-4 lg:gap-8 flex-col lg:flex-row">
         <div class="flex-1 flex flex-col gap-2">
           <h4 class="text-2xl font-bold pl-3">
@@ -170,20 +169,20 @@ watch(price, (value) => {
             </textarea>
           </div>
         </div>
-      </div>
     </div>
     <div class="flex justify-between">
       <Button 
+        variant="outline"
         type="button"
         @click="emit('prev')"
-        class="font-bold text-lg py-6 px-6 sm:ml-8"
+        class="font-bold text-lg py-6 px-6 sm:ml-8 border-black border-2 shadow-md"
       >
         Prethodno
       </Button>
       <Button 
         type="submit"
         :disabled="false"
-        class="font-bold text-lg py-6 px-6 sm:mr-8"
+        class="font-bold text-lg py-[26px] px-6 sm:mr-8"
       >
         Naruči
       </Button>

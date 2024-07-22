@@ -54,7 +54,7 @@ const switchTypes: SwitchTypeWithDesc[] = [
         Tip svičeva
       </h2>
       <p class="text-xl">
-        Suprotno popularnom mišljenju naše iskustvo je pokazalo da različiti tipovi svičeva ne utiču drastično na zvuk tastature, već više na sam osećaj pri kucanju (osim u slučaju tihih svičeva, naravno). Sa date liste možete odabrati jedan ili više tipova.
+        Možete odabrati jedan ili više tipova svičeva. Kratak opis je dat pored svakog od tipova, ali ako niste sigurni oko svog izbora možete pogledati (i poslušati!) ceo izbor <NuxtLink to="/switches" class="text-blue-600">ovde</NuxtLink>.
       </p>
     </div>
     <div class="m-auto space-y-8">
@@ -74,7 +74,7 @@ const switchTypes: SwitchTypeWithDesc[] = [
           alt="100% keyboard format"
           class="w-full max-w-screen-xs rounded-2xl"
         >
-        <div class="space-y-2 w-full">
+        <div class="space-y-2 w-full text-left">
           <h3 class="font-bold text-2xl sm:text-4xl">
             {{ switchType.title }}
           </h3> 
@@ -86,17 +86,19 @@ const switchTypes: SwitchTypeWithDesc[] = [
     </div>
     <div class="flex justify-between">
       <Button 
+        variant="outline"
         type="button"
         @click="emit('prev')"
-        class="font-bold text-lg py-6 px-6 sm:ml-8"
+        class="font-bold text-lg py-6 px-6 sm:ml-8 border-2 border-black shadow-md"
       >
         Prethodno
       </Button>
       <Button 
+        variant="outline"
         type="button"
         :disabled="selected.size === 0"
         @click="emit('next')"
-        class="font-bold text-lg py-6 px-6 sm:mr-8"
+        class="font-bold text-lg py-6 px-6 sm:mr-8 border-2 border-black shadow-md"
       >
         Sledeće
       </Button>

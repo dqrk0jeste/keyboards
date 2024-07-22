@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { Color, Format, SwitchType } from '~/server/utils/enums'
 
-const currentPart = ref(0)
+const currentPart = useState("current-part", () => 0)
 
-const format = ref(null as Format | null)
-const pudding = ref(false)
-const mainColor = ref(null as Color | null)
-const otherColor = ref(null as Color | null)
-const switchTypes = ref(new Set<SwitchType>())
-const bluetooth = ref(false)
-const wireless = ref(false)
+const format = useState("form-format", () => null as Format | null)
+const pudding = useState("form-pudding", () => false)
+const mainColor = useState("form-main-color", () => null as Color | null)
+const otherColor = useState("form-other-color", () => null as Color | null)
+const switchTypes = useState("form-switch-types", () => new Set<SwitchType>())
+const bluetooth = useState("form-bluetooth", () => false)
+const wireless = useState("form-wireless", () => false)
 
 async function submitForm() {
   if(!format.value || !mainColor.value || switchTypes.value.size === 0) {

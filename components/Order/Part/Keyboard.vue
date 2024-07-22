@@ -23,7 +23,7 @@ const valid = computed(() =>
 
 <template>
   <div class="space-y-8">
-    <div class="border-black sm:border-2 rounded-2xl sm:p-8">
+    <div class="border-black sm:border-2 rounded-2xl sm:p-8 sm:bg-white sm:shadow-md">
       <div class="max-w-screen-sm m-auto space-y-4">
         <OrderSelectModal
           type="keyboards"
@@ -47,10 +47,11 @@ const valid = computed(() =>
     </div>
     <div class="flex justify-end">
       <Button 
+        variant="outline"
         type="button"
         :disabled="!valid"
         @click="emit('next')"
-        class="font-bold text-lg py-6 px-6 sm:mr-8"
+        class="font-bold text-lg py-6 px-6 sm:mr-8 border-black border-2 shadow-md"
       >
         Sledeće
       </Button>

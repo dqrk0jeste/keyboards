@@ -27,11 +27,10 @@ const cheaperOption: KeyboardBuild = {
 }
 
 function choose(k: KeyboardBuild) {
-  const form = useFormResult()
-  form.value = {
+  setFormResult({
     chosen: k,
     response: formResponse.value!,
-  }
+  })
 
   navigateTo("/orders")
 }

@@ -33,44 +33,44 @@ function colorBasedOnSwitchType(type: SwitchType): string {
       src="@/assets/images/keyboard_1.jpg" 
       class="w-20 sm:w-28 rounded-md"
     >
-    <div class="flex-1">
+    <div class="flex-1 space-y-1">
       <div class="flex items-start justify-between">
-        <p class="xs:text-md sm:text-lg md:text-2xl font-bold whitespace-normal">
-          <span>
-            {{ props.item.name }}
-          </span>
-          <div 
-            v-if="props.type === 'keycaps'"
-            class="inline-block ml-2 rounded-full aspect-square w-6 border-black border-2" 
-            :style="{ backgroundColor: props.item.mainColor }"
-          >
-          </div>
-          <div 
-            v-else-if="props.type === 'keyboards'"
-            class="inline-block ml-2 rounded-full aspect-square w-6 border-black border-2" 
-            :style="{ backgroundColor: props.item.color }"
-          >
-          </div>
+        <p>
           <span
-            v-else-if="props.type === 'switches'"
-            class="ml-2 px-3 rounded-full font-normal text-md sm:text-lg" 
+            v-if="props.type === 'switches'"
+            class="mr-2 px-3 rounded-full text-md xs:text-lg" 
             :style="{
               backgroundColor: colorBasedOnSwitchType(props.item.type)
             }"
           >
             {{ props.item.type }}
           </span>
+          <div 
+            v-else-if="props.type === 'keycaps'"
+            class="inline-block mr-2 rounded-full aspect-square w-6 border-black border-2" 
+            :style="{ backgroundColor: props.item.mainColor }"
+          >
+          </div>
+          <div 
+            v-else-if="props.type === 'keyboards'"
+            class="inline-block mr-2 rounded-full aspect-square w-6 border-black border-2" 
+            :style="{ backgroundColor: props.item.color }"
+          >
+          </div>
+          <span class="text-md xs:text-xl">
+            {{ props.item.name }}
+          </span>
         </p>
         <NuxtLink
           v-if="!props.locked"
           :to="`/${ props.type }/${ props.item.id }`" 
-          class="text-2xl"
+          class="text-2xl hidden"
           @click.stop
         >
           <IconInfo />     
         </NuxtLink>
       </div>
-      <p class="text-2xl md:text-3xl font-bold text-end mt-2">
+      <p class="text-2xl sm:text-3xl font-bold text-end">
         {{ props.item.price }} din
       </p>
     </div>

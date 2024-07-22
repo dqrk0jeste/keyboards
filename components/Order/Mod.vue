@@ -27,12 +27,12 @@ state.value = state.value || props.mod.required
           v-model:checked="state"
         />
         <p class="text-lg">
-          {{ props.mod.price ? `+ ${ props.mod.price } din` : "besplatno"}}
+          {{ props.mod.price }} din
         </p>
       </div>
     </AccordionTrigger>
     <AccordionContent>
-      <p class="text-lg sm:text-xl">
+      <p class="text-lg">
         {{ props.mod.desc }}
       </p>
     </AccordionContent>
